@@ -1,0 +1,156 @@
+@startuml Control_Tasks_UseCases
+
+!define SYSTEMCOLOR #E1F5FF
+!define ACTORLIGHTBLUE #B3E5FC
+!define ACTORLIGHTGREEN #C8E6C9
+
+skinparam backgroundColor SYSTEMCOLOR
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #01579B
+
+' ============================================================================
+' ATORES
+' ============================================================================
+actor "User" as USER #ACTORLIGHTBLUE
+actor "Admin" as ADMIN #ACTORLIGHTGREEN
+actor "Sistema" as SYSTEM #FFE0B2
+
+' ============================================================================
+' AUTENTICAÇÃO E GERENCIAMENTO DE USUÁRIOS
+' ============================================================================
+package "Autenticação e Usuários" #FFE0E0 {
+    usecase "Registrar Novo Usuário" as UC_REGISTER
+    usecase "Autenticar Usuário" as UC_LOGIN
+    usecase "Gerar Token API" as UC_TOKEN
+    usecase "Visualizar Perfil" as UC_VIEW_PROFILE
+    usecase "Atualizar Perfil Próprio" as UC_UPDATE_PROFILE
+    usecase "Atualizar Perfil Outro\n(Admin Only)" as UC_UPDATE_OTHER
+}
+
+' ============================================================================
+' GERENCIAMENTO DE NOTAS/TAREFAS
+' ============================================================================
+package "Notas e Tarefas" #E0F2E0 {
+    usecase "Criar Nota/Tarefa" as UC_CREATE_NOTE
+    usecase "Listar Todas as Notas" as UC_LIST_ALL_NOTES
+    usecase "Visualizar Nota" as UC_VIEW_NOTE
+    usecase "Atualizar Nota" as UC_UPDATE_NOTE
+    usecase "Deletar Nota" as UC_DELETE_NOTE
+    usecase "Atribuir Nota a Usuário" as UC_ASSIGN_NOTE
+    usecase "Remover Atribuição" as UC_UNASSIGN_NOTE
+    usecase "Filtrar Notas" as UC_FILTER_NOTES
+}
+
+' ============================================================================
+' NOTAS DO USUÁRIO E ESTATÍSTICAS
+' ============================================================================
+package "Meus Dados e Estatísticas" #E0E0F2 {
+    usecase "Visualizar Minhas Notas" as UC_MY_NOTES
+    usecase "Visualizar Minhas Estatísticas" as UC_MY_STATS
+}
+
+' ============================================================================
+' COLABORAÇÃO EM EQUIPE
+' ============================================================================
+package "Colaboração em Equipe" #F0E0F2 {
+    usecase "Gerenciar Time" as UC_MANAGE_TEAM
+    usecase "Compartilhar Nota no Time" as UC_SHARE_TEAM
+    usecase "Visualizar Notas do Time" as UC_VIEW_TEAM_NOTES
+}
+
+' ============================================================================
+' LÓGICA DE DOMÍNIO
+' ============================================================================
+package "Lógica de Nota" #FFFACD {
+    usecase "Transicionar Estado" as UC_STATE_CHANGE
+    usecase "Verificar Vencimento" as UC_CHECK_OVERDUE
+    usecase "Validar Permissões" as UC_CHECK_PERMISSIONS
+}
+
+' ============================================================================
+' RELACIONAMENTOS - AUTENTICAÇÃO
+' ============================================================================
+
+USER --> UC_REGISTER : registra
+USER --> UC_LOGIN : realiza
+UC_LOGIN .> UC_TOKEN : <<include>>
+USER --> UC_VIEW_PROFILE : consulta
+USER --> UC_UPDATE_PROFILE : atualiza seu próprio
+
+ADMIN --> UC_UPDATE_OTHER : atualiza de outros
+
+' ============================================================================
+' RELACIONAMENTOS - NOTAS
+' ============================================================================
+
+USER --> UC_CREATE_NOTE : cria
+USER --> UC_LIST_ALL_NOTES : lista
+UC_LIST_ALL_NOTES ..> UC_FILTER_NOTES : <<include>>
+USER --> UC_VIEW_NOTE : visualiza
+USER --> UC_UPDATE_NOTE : atualiza
+USER --> UC_DELETE_NOTE : remove
+USER --> UC_ASSIGN_NOTE : atribui a outro
+
+ADMIN --> UC_DELETE_NOTE : pode remover qualquer
+ADMIN --> UC_ASSIGN_NOTE : pode atribuir qualquer
+
+' ============================================================================
+' RELACIONAMENTOS - MINHAS NOTAS
+' ============================================================================
+
+USER --> UC_MY_NOTES : consulta minhas
+USER --> UC_MY_STATS : consulta meu desempenho
+
+' ============================================================================
+' RELACIONAMENTOS - COLABORAÇÃO
+' ============================================================================
+
+ADMIN --> UC_MANAGE_TEAM : gerencia
+USER --> UC_SHARE_TEAM : compartilha em
+USER --> UC_VIEW_TEAM_NOTES : visualiza do time
+
+' ============================================================================
+' RELACIONAMENTOS - LÓGICA DE DOMÍNIO (SISTEMA)
+' ============================================================================
+
+UC_UPDATE_NOTE ..> UC_STATE_CHANGE : <<include>>
+UC_LIST_ALL_NOTES ..> UC_CHECK_OVERDUE : <<include>>
+UC_UPDATE_NOTE ..> UC_CHECK_PERMISSIONS : <<include>>
+UC_DELETE_NOTE ..> UC_CHECK_PERMISSIONS : <<include>>
+UC_ASSIGN_NOTE ..> UC_CHECK_PERMISSIONS : <<include>>
+
+' ============================================================================
+' NOTAS ADICIONAIS
+' ============================================================================
+
+note right of UC_LOGIN
+  Valida credenciais e
+  retorna token para
+  acesso aos endpoints protegidos
+end note
+
+note right of UC_FILTER_NOTES
+  Filtros disponíveis:
+  - Título
+  - Status
+  - Prioridade
+  - Categoria
+  - Data
+  - Responsável
+  - Time
+  - Criador
+end note
+
+note right of UC_STATE_CHANGE
+  Estados: PENDING → TODO →
+  IN_PROGRESS → REVIEW →
+  COMPLETED ou CANCELLED
+end note
+
+note bottom of SYSTEM
+  Validações, transições de estado,
+  verificações de permissão executadas
+  automaticamente pelo sistema
+end note
+
+@enduml
