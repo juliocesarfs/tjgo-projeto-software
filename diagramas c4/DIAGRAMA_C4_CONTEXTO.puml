@@ -1,0 +1,53 @@
+@startuml C4_Context_ControlTasks
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+' ============================================================================
+' SYSTEM CONTEXT DIAGRAM - Level 1
+' Control Tasks Backend - Sistema de Gerenciamento de Notas e Tarefas
+' ============================================================================
+
+LAYOUT_WITH_LEGEND()
+
+' ============================================================================
+' ATORES / USUÁRIOS
+' ============================================================================
+Person(userPerson, "User (Usuário Comum)", "Um usuário que cria, edita e gerencia suas notas e tarefas, podendo colaborar em times")
+
+Person(adminPerson, "Admin (Administrador)", "Um usuário administrador que gerencia times, usuários e tem acesso completo ao sistema")
+
+' ============================================================================
+' SISTEMA PRINCIPAL
+' ============================================================================
+System(controlTasksAPI, "Control Tasks Backend", "API REST para gerenciamento de notas e tarefas com colaboração em equipe")
+
+' ============================================================================
+' BANCO DE DADOS
+' ============================================================================
+System_Ext(postgresDB, "PostgreSQL", "Banco de dados relacional que armazena usuários, notas, times, tokens e histórico")
+
+' ============================================================================
+' SISTEMAS EXTERNOS (FUTURO)
+' ============================================================================
+System_Ext(emailService, "Email Service (Opcional)", "Serviço para envio de notificações via email")
+
+' ============================================================================
+' RELACIONAMENTOS
+' ============================================================================
+
+' Usuário comum
+Rel(userPerson, controlTasksAPI, "Cria/Edita/Consulta Notas e Tarefas", "HTTP/REST (JWT Token)")
+Rel(controlTasksAPI, userPerson, "Retorna Dados e Notificações")
+
+' Admin
+Rel(adminPerson, controlTasksAPI, "Gerencia Sistema, Times e Usuários", "HTTP/REST (JWT Token)")
+Rel(controlTasksAPI, adminPerson, "Retorna Dados e Relatórios")
+
+' API com Database
+Rel(controlTasksAPI, postgresDB, "Lê/Escreve Dados", "PostgreSQL Connection\nPrisma ORM")
+Rel(postgresDB, controlTasksAPI, "Retorna Dados Consultados")
+
+' API com Email (futuro)
+Rel_D(controlTasksAPI, emailService, "Envia Notificações\n(Futuro)", "SMTP/API")
+
+@enduml

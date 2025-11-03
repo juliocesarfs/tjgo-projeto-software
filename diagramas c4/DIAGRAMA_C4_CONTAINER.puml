@@ -1,0 +1,95 @@
+@startuml C4_Container_ControlTasks
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' ============================================================================
+' CONTAINER DIAGRAM - Level 2
+' Control Tasks Backend - Arquitetura de Containers
+' ============================================================================
+
+LAYOUT_WITH_LEGEND()
+
+Person(userPerson, "User", "Usuário do sistema")
+Person(adminPerson, "Admin", "Administrador do sistema")
+
+System_Boundary(controlTasksSystem, "Control Tasks System") {
+    ' ============================================================================
+    ' CONTAINER: API REST
+    ' ============================================================================
+    Container(apiRest, "API REST", "NestJS 11 / TypeScript", "Aplicação backend responsável por:\n- Endpoints HTTP (Controllers)\n- Lógica de negócio (Use Cases)\n- Modelos de domínio (Entities)\n- Validação de entrada (DTOs)\n- Autenticação e autorização")
+
+    ' ============================================================================
+    ' CONTAINER: DATABASE
+    ' ============================================================================
+    Container(postgresDB, "Database", "PostgreSQL 12+", "Armazena:\n- Usuários (User)\n- Notas/Tarefas (Note)\n- Times (Team)\n- API Tokens (ApiToken)\n- Relacionamentos entre entidades")
+
+    ' ============================================================================
+    ' CONTAINER: CACHE (FUTURO)
+    ' ============================================================================
+    Container(cacheService, "Cache Service", "Redis (Opcional)", "Armazena em cache:\n- Dados de usuário\n- Notas frequentes\n- Tokens\n- Resultados de queries")
+}
+
+System_Ext(emailService, "Email Service", "SendGrid/AWS SES\n(Futuro)", "Notificações via email")
+
+' ============================================================================
+' RELACIONAMENTOS EXTERNO
+' ============================================================================
+
+Rel(userPerson, apiRest, "Usa", "HTTP/REST\nJSON\nBearer Token (JWT)")
+Rel(adminPerson, apiRest, "Gerencia via", "HTTP/REST\nJSON\nBearer Token (JWT)")
+
+' ============================================================================
+' RELACIONAMENTOS INTERNOS
+' ============================================================================
+
+Rel(apiRest, postgresDB, "Lê/Escreve dados", "SQL via Prisma ORM\nConnection Pool")
+Rel(postgresDB, apiRest, "Retorna dados", "Queries result")
+
+Rel(apiRest, cacheService, "Lê/Escreve cache", "Redis Protocol")
+Rel(cacheService, apiRest, "Retorna dados em cache", "Cache hit/miss")
+
+Rel_D(apiRest, emailService, "Envia notificações", "SMTP/API\n(Futuro)")
+
+' ============================================================================
+' NOTAS
+' ============================================================================
+
+note right of apiRest
+  **Responsabilidades:**
+  - Autenticação (JWT/API Tokens)
+  - CRUD de Notas
+  - CRUD de Usuários
+  - Gerenciamento de Times
+  - Filtros e Estatísticas
+  - Validação de permissões
+
+  **Padrões:**
+  - Clean Architecture
+  - Repository Pattern
+  - Use Case Pattern
+  - Dependency Injection
+end note
+
+note right of postgresDB
+  **Tabelas principais:**
+  - User (email, name, password, type)
+  - Note (title, status, priority, dueDate)
+  - Team (name, code, adminId)
+  - ApiToken (token, userId, expiresAt)
+
+  **Índices em:**
+  - email, teamId
+  - createdById, assignedToId
+  - status, category
+  - token, userId
+end note
+
+note right of cacheService
+  **Futuro:**
+  - Cache de sessões
+  - Cache de queries
+  - Rate limiting
+  - Sessions storage
+end note
+
+@enduml
