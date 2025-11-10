@@ -9,11 +9,14 @@ skinparam classBackgroundColor #FFFFFF
 skinparam classBorderColor #01579B
 
 ' ============================================================================
-' ATORES
-' ============================================================================
-actor "User" as USER
-actor "Admin" as ADMIN
+
+actor "Gerente de Equipe" as TEAM_MANAGER
+actor "Membro da Equipe" as TEAM_MEMBER
+actor "Pessoa Autônoma" as AUTONOMOUS
+actor "Usuario" as USER
 actor "Sistema" as SYSTEM
+actor "Web App" as WEBAPP
+actor "Mobile App" as MOBILEAPP
 
 skinparam actor {
   BackgroundColor #B3E5FC
@@ -36,14 +39,18 @@ package "Autenticação e Usuários" #FFE0E0 {
 ' GERENCIAMENTO DE NOTAS/TAREFAS
 ' ============================================================================
 package "Notas e Tarefas" #E0F2E0 {
-    usecase "Criar Nota/Tarefa" as UC_CREATE_NOTE
-    usecase "Listar Todas as Notas" as UC_LIST_ALL_NOTES
-    usecase "Visualizar Nota" as UC_VIEW_NOTE
-    usecase "Atualizar Nota" as UC_UPDATE_NOTE
-    usecase "Deletar Nota" as UC_DELETE_NOTE
-    usecase "Atribuir Nota a Usuário" as UC_ASSIGN_NOTE
-    usecase "Remover Atribuição" as UC_UNASSIGN_NOTE
-    usecase "Filtrar Notas" as UC_FILTER_NOTES
+  usecase "Criar Nota/Tarefa" as UC_CREATE_NOTE
+  usecase "Atribuir Tarefa" as UC_ASSIGN_TASK
+  usecase "Definir Prazo para Tarefa" as UC_SET_DEADLINE
+  usecase "Criar Subtarefas" as UC_CREATE_SUBTASK
+  usecase "Editar Tarefa em Tempo Real" as UC_EDIT_TASK_REALTIME
+  usecase "Marcar Tarefa como Concluída" as UC_MARK_DONE
+  usecase "Listar Todas as Notas" as UC_LIST_ALL_NOTES
+  usecase "Visualizar Nota" as UC_VIEW_NOTE
+  usecase "Atualizar Nota" as UC_UPDATE_NOTE
+  usecase "Deletar Nota" as UC_DELETE_NOTE
+  usecase "Remover Atribuição" as UC_UNASSIGN_NOTE
+  usecase "Filtrar Notas" as UC_FILTER_NOTES
 }
 
 ' ============================================================================
@@ -68,6 +75,8 @@ package "Colaboração em Equipe" #F0E0F2 {
 ' ATIVIDADES E HISTÓRICO
 ' ============================================================================
 package "Atividades e Histórico" #FFFACD {
+  usecase "Registrar Progresso" as UC_LOG_PROGRESS
+  usecase "Visualizar Histórico de Alterações" as UC_VIEW_HISTORY
   usecase "Registrar Atividades\n(Automático)" as UC_LOG_ACTIVITIES
   usecase "Listar Atividades" as UC_VIEW_ACTIVITIES
 }
@@ -82,9 +91,19 @@ package "Comentários e Discussão" #FFE0B2 {
 ' NOTIFICAÇÕES
 ' ============================================================================
 package "Notificações" #F0E0F2 {
+  usecase "Receber Notificações por Email" as UC_EMAIL_NOTIFICATION
   usecase "Criar Notificações\n(Automático)" as UC_CREATE_NOTIFICATION
   usecase "Listar Notificações" as UC_VIEW_NOTIFICATIONS
   usecase "Marcar como Lida" as UC_MARK_READ
+' ============================================================================
+' EXPORTAÇÃO, PERSONALIZAÇÃO E TUTORIAL
+' ============================================================================
+package "Funcionalidades Gerais" #E0E0E0 {
+  usecase "Exportar Dados" as UC_EXPORT_DATA
+  usecase "Personalizar Interface" as UC_CUSTOMIZE_UI
+  usecase "Acessar Versão Móvel" as UC_ACCESS_MOBILE
+  usecase "Acessar Tutorial" as UC_ACCESS_TUTORIAL
+}
 }
 
 ' ============================================================================
@@ -97,16 +116,41 @@ package "Lógica de Nota" #FFFACD {
 }
 
 ' ============================================================================
-' RELACIONAMENTOS - AUTENTICAÇÃO
+
+
+' RELACIONAMENTOS - PAPÉIS E FUNCIONALIDADES
 ' ============================================================================
 
-USER --> UC_REGISTER : registra
-USER --> UC_LOGIN : realiza
-UC_LOGIN .> UC_TOKEN : <<include>>
-USER --> UC_VIEW_PROFILE : consulta
-USER --> UC_UPDATE_PROFILE : atualiza seu próprio
+TEAM_MANAGER --> UC_CREATE_NOTE : cria tarefa
+TEAM_MANAGER --> UC_ASSIGN_TASK : atribui tarefa
+TEAM_MANAGER --> UC_SET_DEADLINE : define prazo
+TEAM_MANAGER --> UC_LOG_PROGRESS : gera registro de progresso
+TEAM_MANAGER --> UC_CREATE_SUBTASK : cria subtarefas
+TEAM_MANAGER --> UC_EMAIL_NOTIFICATION : recebe notificações por email
+TEAM_MANAGER --> UC_VIEW_HISTORY : visualiza histórico de alterações
+TEAM_MANAGER --> UC_EXPORT_DATA : exporta dados
+TEAM_MANAGER --> UC_CUSTOMIZE_UI : personaliza interface
+TEAM_MANAGER --> UC_ACCESS_MOBILE : acessa versão móvel
+TEAM_MANAGER --> UC_ACCESS_TUTORIAL : acessa tutorial
 
-ADMIN --> UC_UPDATE_OTHER : atualiza de outros
+TEAM_MEMBER --> UC_EDIT_TASK_REALTIME : edita tarefa em tempo real
+TEAM_MEMBER --> UC_MARK_DONE : marca tarefa como concluída
+TEAM_MEMBER --> UC_EMAIL_NOTIFICATION : recebe notificações por email
+TEAM_MEMBER --> UC_EXPORT_DATA : exporta dados
+TEAM_MEMBER --> UC_CUSTOMIZE_UI : personaliza interface
+TEAM_MEMBER --> UC_ACCESS_MOBILE : acessa versão móvel
+TEAM_MEMBER --> UC_ACCESS_TUTORIAL : acessa tutorial
+
+AUTONOMOUS --> UC_MARK_DONE : marca tarefa como concluída
+AUTONOMOUS --> UC_EXPORT_DATA : exporta dados
+AUTONOMOUS --> UC_CUSTOMIZE_UI : personaliza interface
+AUTONOMOUS --> UC_ACCESS_MOBILE : acessa versão móvel
+AUTONOMOUS --> UC_ACCESS_TUTORIAL : acessa tutorial
+
+USER --> UC_EXPORT_DATA : exporta dados
+USER --> UC_CUSTOMIZE_UI : personaliza interface
+USER --> UC_ACCESS_MOBILE : acessa versão móvel
+USER --> UC_ACCESS_TUTORIAL : acessa tutorial
 
 ' ============================================================================
 ' RELACIONAMENTOS - NOTAS
