@@ -11,9 +11,14 @@ skinparam classBorderColor #01579B
 ' ============================================================================
 ' ATORES
 ' ============================================================================
-actor "User" as USER #ACTORLIGHTBLUE
-actor "Admin" as ADMIN #ACTORLIGHTGREEN
-actor "Sistema" as SYSTEM #FFE0B2
+actor "User" as USER
+actor "Admin" as ADMIN
+actor "Sistema" as SYSTEM
+
+skinparam actor {
+  BackgroundColor #B3E5FC
+  BorderColor #01579B
+}
 
 ' ============================================================================
 ' AUTENTICAÇÃO E GERENCIAMENTO DE USUÁRIOS
@@ -53,9 +58,33 @@ package "Meus Dados e Estatísticas" #E0E0F2 {
 ' COLABORAÇÃO EM EQUIPE
 ' ============================================================================
 package "Colaboração em Equipe" #F0E0F2 {
-    usecase "Gerenciar Time" as UC_MANAGE_TEAM
-    usecase "Compartilhar Nota no Time" as UC_SHARE_TEAM
-    usecase "Visualizar Notas do Time" as UC_VIEW_TEAM_NOTES
+  usecase "Criar Equipe" as UC_CREATE_TEAM
+  usecase "Convidar Usuário\npara Equipe" as UC_INVITE_TEAM
+  usecase "Gerenciar Membros\nda Equipe" as UC_MANAGE_TEAM_MEMBERS
+  usecase "Compartilhar Nota no Time" as UC_SHARE_TEAM
+  usecase "Visualizar Notas do Time" as UC_VIEW_TEAM_NOTES
+}
+
+' ATIVIDADES E HISTÓRICO
+' ============================================================================
+package "Atividades e Histórico" #FFFACD {
+  usecase "Registrar Atividades\n(Automático)" as UC_LOG_ACTIVITIES
+  usecase "Listar Atividades" as UC_VIEW_ACTIVITIES
+}
+
+' COMENTÁRIOS E DISCUSSÃO
+' ============================================================================
+package "Comentários e Discussão" #FFE0B2 {
+  usecase "Adicionar Comentário" as UC_ADD_COMMENT
+  usecase "Listar Comentários" as UC_VIEW_COMMENTS
+}
+
+' NOTIFICAÇÕES
+' ============================================================================
+package "Notificações" #F0E0F2 {
+  usecase "Criar Notificações\n(Automático)" as UC_CREATE_NOTIFICATION
+  usecase "Listar Notificações" as UC_VIEW_NOTIFICATIONS
+  usecase "Marcar como Lida" as UC_MARK_READ
 }
 
 ' ============================================================================
@@ -105,9 +134,30 @@ USER --> UC_MY_STATS : consulta meu desempenho
 ' RELACIONAMENTOS - COLABORAÇÃO
 ' ============================================================================
 
-ADMIN --> UC_MANAGE_TEAM : gerencia
+' RELACIONAMENTOS - COLABORAÇÃO EM EQUIPE
+' ============================================================================
+ADMIN --> UC_CREATE_TEAM : cria
+ADMIN --> UC_INVITE_TEAM : convida usuários
+ADMIN --> UC_MANAGE_TEAM_MEMBERS : gerencia membros
+USER --> UC_INVITE_TEAM : se junta via código
 USER --> UC_SHARE_TEAM : compartilha em
 USER --> UC_VIEW_TEAM_NOTES : visualiza do time
+
+' RELACIONAMENTOS - ATIVIDADES
+' ============================================================================
+SYSTEM --> UC_LOG_ACTIVITIES : registra automaticamente
+USER --> UC_VIEW_ACTIVITIES : consulta seu histórico
+
+' RELACIONAMENTOS - COMENTÁRIOS
+' ============================================================================
+USER --> UC_ADD_COMMENT : adiciona em nota
+USER --> UC_VIEW_COMMENTS : lê comentários
+
+' RELACIONAMENTOS - NOTIFICAÇÕES
+' ============================================================================
+SYSTEM --> UC_CREATE_NOTIFICATION : cria automaticamente
+USER --> UC_VIEW_NOTIFICATIONS : consulta
+USER --> UC_MARK_READ : marca lidas
 
 ' ============================================================================
 ' RELACIONAMENTOS - LÓGICA DE DOMÍNIO (SISTEMA)
@@ -118,6 +168,8 @@ UC_LIST_ALL_NOTES ..> UC_CHECK_OVERDUE : <<include>>
 UC_UPDATE_NOTE ..> UC_CHECK_PERMISSIONS : <<include>>
 UC_DELETE_NOTE ..> UC_CHECK_PERMISSIONS : <<include>>
 UC_ASSIGN_NOTE ..> UC_CHECK_PERMISSIONS : <<include>>
+
+UC_CREATE_NOTIFICATION ..> UC_CHECK_OVERDUE : <<include>>
 
 ' ============================================================================
 ' NOTAS ADICIONAIS
@@ -147,9 +199,19 @@ note right of UC_STATE_CHANGE
   COMPLETED ou CANCELLED
 end note
 
+note right of UC_CREATE_NOTIFICATION
+  Notificações para:
+  - Atribuição de tarefa
+  - Comentários adicionados
+  - Tarefas compartilhadas
+  - Convites de equipe
+  - Tarefas vencidas
+end note
+
 note bottom of SYSTEM
   Validações, transições de estado,
-  verificações de permissão executadas
+  verificações de permissão e
+  registro de atividades executadas
   automaticamente pelo sistema
 end note
 
