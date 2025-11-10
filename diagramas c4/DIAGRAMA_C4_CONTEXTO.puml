@@ -4,7 +4,7 @@
 
 ' ============================================================================
 ' SYSTEM CONTEXT DIAGRAM - Level 1
-' Control Tasks Backend - Sistema de Gerenciamento de Notas e Tarefas
+' Control Tasks - Sistema de Gerenciamento de Tarefas, Notas, Equipes, Comentários, Atividades e Notificações (Web e Mobile)
 ' ============================================================================
 
 LAYOUT_WITH_LEGEND()
@@ -12,42 +12,47 @@ LAYOUT_WITH_LEGEND()
 ' ============================================================================
 ' ATORES / USUÁRIOS
 ' ============================================================================
-Person(userPerson, "User (Usuário Comum)", "Um usuário que cria, edita e gerencia suas notas e tarefas, podendo colaborar em times")
+Person(userPerson, "User (Usuário Comum)", "Cria, edita, comenta, recebe notificações, visualiza estatísticas e gerencia suas notas/tarefas. Pode colaborar em equipes e consultar histórico de atividades.")
 
-Person(adminPerson, "Admin (Administrador)", "Um usuário administrador que gerencia times, usuários e tem acesso completo ao sistema")
+Person(adminPerson, "Admin (Administrador)", "Gerencia equipes, usuários, tarefas, comentários, notificações e tem acesso completo ao sistema, incluindo estatísticas globais e histórico.")
+
+
+
 
 ' ============================================================================
 ' SISTEMA PRINCIPAL
 ' ============================================================================
-System(controlTasksAPI, "Control Tasks Backend", "API REST para gerenciamento de notas e tarefas com colaboração em equipe")
+System(controlTasks, "Control Tasks", "Sistema de Gerenciamento de Tarefas, Notas, Equipes, Comentários, Atividades e Notificações acessível via Web e Mobile. Inclui interface, lógica de negócio e armazenamento de dados.")
 
 ' ============================================================================
 ' BANCO DE DADOS
 ' ============================================================================
-System_Ext(postgresDB, "PostgreSQL", "Banco de dados relacional que armazena usuários, notas, times, tokens e histórico")
+
 
 ' ============================================================================
 ' SISTEMAS EXTERNOS (FUTURO)
 ' ============================================================================
-System_Ext(emailService, "Email Service (Opcional)", "Serviço para envio de notificações via email")
+System_Ext(emailService, "Email Service API (Externa)", "API externa contratada para envio de emails transacionais e notificações aos usuários")
 
 ' ============================================================================
 ' RELACIONAMENTOS
 ' ============================================================================
 
+
+
+
+
 ' Usuário comum
-Rel(userPerson, controlTasksAPI, "Cria/Edita/Consulta Notas e Tarefas", "HTTP/REST (JWT Token)")
-Rel(controlTasksAPI, userPerson, "Retorna Dados e Notificações")
+Rel(userPerson, controlTasks, "Acessa, cria, edita e consulta notas/tarefas, comenta, visualiza estatísticas, histórico e recebe notificações via web ou mobile", "HTTPS (Web/Mobile)")
+Rel(controlTasks, userPerson, "Retorna dados, comentários, estatísticas, atividades e notificações", "HTTPS (Web/Mobile)")
 
 ' Admin
-Rel(adminPerson, controlTasksAPI, "Gerencia Sistema, Times e Usuários", "HTTP/REST (JWT Token)")
-Rel(controlTasksAPI, adminPerson, "Retorna Dados e Relatórios")
+Rel(adminPerson, controlTasks, "Gerencia sistema, equipes, usuários, notas, comentários, notificações e estatísticas globais via web ou mobile", "HTTPS (Web/Mobile)")
+Rel(controlTasks, adminPerson, "Retorna dados, relatórios, estatísticas e histórico completo", "HTTPS (Web/Mobile)")
 
-' API com Database
-Rel(controlTasksAPI, postgresDB, "Lê/Escreve Dados", "PostgreSQL Connection\nPrisma ORM")
-Rel(postgresDB, controlTasksAPI, "Retorna Dados Consultados")
 
-' API com Email (futuro)
-Rel_D(controlTasksAPI, emailService, "Envia Notificações\n(Futuro)", "SMTP/API")
+
+' Integração com Email
+Rel(controlTasks, emailService, "Solicita envio de emails transacionais e notificações", "REST API/SMTP (Serviço Contratado)")
 
 @enduml
