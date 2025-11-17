@@ -12,13 +12,11 @@ LAYOUT_WITH_LEGEND()
 ' ============================================================================
 ' ATORES / USUÁRIOS
 ' ============================================================================
-Person(teamManager, "Gerente de Equipe", "Cria, atribui e define prazos para tarefas, gera registros de progresso, cria subtarefas, recebe notificações por email, visualiza histórico e exporta dados. Gerencia equipe via web ou mobile.")
+Person(teamManager, "Gerente de Equipe", "Gerencia equipe, cria e atribui tarefas, define prazos e gera relatórios")
 
-Person(teamMember, "Membro da Equipe", "Edita tarefas em tempo real, marca como concluída, recebe notificações por email, exporta dados e acessa via mobile. Colabora em equipe.")
+Person(user, "Usuário", "Pode trabalhar de forma independentemente ou participar de equipes")
 
-Person(autonomous, "Pessoa Autônoma", "Marca tarefas como concluída, exporta dados, personaliza interface e acessa via mobile. Trabalha de forma independente.")
-
-Person(adminPerson, "Admin (Administrador)", "Gerencia equipes, usuários, tarefas, comentários, notificações e tem acesso completo ao sistema, incluindo estatísticas globais e histórico.")
+Person(adminPerson, "Admin (Administrador)", "Gerencia sistema, equipes, usuários e tem acesso completo")
 
 
 
@@ -26,7 +24,7 @@ Person(adminPerson, "Admin (Administrador)", "Gerencia equipes, usuários, taref
 ' ============================================================================
 ' SISTEMA PRINCIPAL
 ' ============================================================================
-System(controlTasks, "Control Tasks", "Sistema de Gerenciamento de Tarefas, Notas, Equipes, Comentários, Atividades e Notificações acessível via Web e Mobile. Inclui interface, lógica de negócio e armazenamento de dados.")
+System(controlTasks, "Control Tasks", "Sistema de Gerenciamento de Tarefas, via Web e Mobile.")
 
 ' ============================================================================
 ' BANCO DE DADOS
@@ -36,7 +34,7 @@ System(controlTasks, "Control Tasks", "Sistema de Gerenciamento de Tarefas, Nota
 ' ============================================================================
 ' SISTEMAS EXTERNOS (FUTURO)
 ' ============================================================================
-System_Ext(emailService, "Email Service API (Externa)", "API externa contratada para envio de emails transacionais e notificações aos usuários")
+System_Ext(emailService, "Email Service API", "API externa para envio de emails transacionais e notificações aos usuários")
 
 ' ============================================================================
 ' RELACIONAMENTOS
@@ -50,13 +48,9 @@ System_Ext(emailService, "Email Service API (Externa)", "API externa contratada 
 Rel(teamManager, controlTasks, "Cria e atribui tarefas, define prazos, gera registros de progresso, cria subtarefas, recebe notificações por email, visualiza histórico e exporta dados via web ou mobile", "HTTPS (Web/Mobile)")
 Rel(controlTasks, teamManager, "Retorna dados de tarefas, progresso, histórico, notificações e relatórios", "HTTPS (Web/Mobile)")
 
-' Membro da Equipe
-Rel(teamMember, controlTasks, "Edita tarefas em tempo real, marca como concluída, recebe notificações por email, exporta dados e colabora via web ou mobile", "HTTPS (Web/Mobile)")
-Rel(controlTasks, teamMember, "Retorna dados de tarefas, comentários, estatísticas e notificações", "HTTPS (Web/Mobile)")
-
-' Pessoa Autônoma
-Rel(autonomous, controlTasks, "Marca tarefas como concluída, exporta dados, personaliza interface e acessa via mobile", "HTTPS (Web/Mobile)")
-Rel(controlTasks, autonomous, "Retorna dados de tarefas, estatísticas e notificações", "HTTPS (Web/Mobile)")
+' Usuário
+Rel(user, controlTasks, "Edita tarefas, marca como concluída, recebe notificações por email, exporta dados, personaliza interface e colabora ou trabalha independentemente via web ou mobile")
+Rel(controlTasks, user, "Retorna dados de tarefas, comentários, estatísticas e notificações")
 
 ' Admin
 Rel(adminPerson, controlTasks, "Gerencia sistema, equipes, usuários, notas, comentários, notificações e estatísticas globais via web ou mobile", "HTTPS (Web/Mobile)")
@@ -65,6 +59,6 @@ Rel(controlTasks, adminPerson, "Retorna dados, relatórios, estatísticas e hist
 
 
 ' Integração com Email
-Rel(controlTasks, emailService, "Solicita envio de emails transacionais e notificações", "REST API/SMTP (Serviço Contratado)")
+Rel(controlTasks, emailService, "Solicita envio de emails transacionais e notificações", "REST API/SMTP")
 
 @enduml
