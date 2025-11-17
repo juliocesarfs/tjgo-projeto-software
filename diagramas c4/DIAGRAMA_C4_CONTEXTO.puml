@@ -12,7 +12,11 @@ LAYOUT_WITH_LEGEND()
 ' ============================================================================
 ' ATORES / USUÁRIOS
 ' ============================================================================
-Person(userPerson, "User (Usuário Comum)", "Cria, edita, comenta, recebe notificações, visualiza estatísticas e gerencia suas notas/tarefas. Pode colaborar em equipes e consultar histórico de atividades.")
+Person(teamManager, "Gerente de Equipe", "Cria, atribui e define prazos para tarefas, gera registros de progresso, cria subtarefas, recebe notificações por email, visualiza histórico e exporta dados. Gerencia equipe via web ou mobile.")
+
+Person(teamMember, "Membro da Equipe", "Edita tarefas em tempo real, marca como concluída, recebe notificações por email, exporta dados e acessa via mobile. Colabora em equipe.")
+
+Person(autonomous, "Pessoa Autônoma", "Marca tarefas como concluída, exporta dados, personaliza interface e acessa via mobile. Trabalha de forma independente.")
 
 Person(adminPerson, "Admin (Administrador)", "Gerencia equipes, usuários, tarefas, comentários, notificações e tem acesso completo ao sistema, incluindo estatísticas globais e histórico.")
 
@@ -42,9 +46,17 @@ System_Ext(emailService, "Email Service API (Externa)", "API externa contratada 
 
 
 
-' Usuário comum
-Rel(userPerson, controlTasks, "Acessa, cria, edita e consulta notas/tarefas, comenta, visualiza estatísticas, histórico e recebe notificações via web ou mobile", "HTTPS (Web/Mobile)")
-Rel(controlTasks, userPerson, "Retorna dados, comentários, estatísticas, atividades e notificações", "HTTPS (Web/Mobile)")
+' Gerente de Equipe
+Rel(teamManager, controlTasks, "Cria e atribui tarefas, define prazos, gera registros de progresso, cria subtarefas, recebe notificações por email, visualiza histórico e exporta dados via web ou mobile", "HTTPS (Web/Mobile)")
+Rel(controlTasks, teamManager, "Retorna dados de tarefas, progresso, histórico, notificações e relatórios", "HTTPS (Web/Mobile)")
+
+' Membro da Equipe
+Rel(teamMember, controlTasks, "Edita tarefas em tempo real, marca como concluída, recebe notificações por email, exporta dados e colabora via web ou mobile", "HTTPS (Web/Mobile)")
+Rel(controlTasks, teamMember, "Retorna dados de tarefas, comentários, estatísticas e notificações", "HTTPS (Web/Mobile)")
+
+' Pessoa Autônoma
+Rel(autonomous, controlTasks, "Marca tarefas como concluída, exporta dados, personaliza interface e acessa via mobile", "HTTPS (Web/Mobile)")
+Rel(controlTasks, autonomous, "Retorna dados de tarefas, estatísticas e notificações", "HTTPS (Web/Mobile)")
 
 ' Admin
 Rel(adminPerson, controlTasks, "Gerencia sistema, equipes, usuários, notas, comentários, notificações e estatísticas globais via web ou mobile", "HTTPS (Web/Mobile)")
