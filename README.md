@@ -191,7 +191,7 @@ Principais casos de uso do sistema, organizados por pacotes:
 ## Diagramas
 
 ### Diagrama de Casos de Uso
-![Diagrama de Casos de Uso UML](imagens/image.png)
+![Diagrama de Casos de Uso UML](imagens/Casos-de-uso.png)
 
 *Representação visual dos casos de uso do sistema Control Tasks, gerada a partir do arquivo `CASOS_DE_USO.puml`.*
 
