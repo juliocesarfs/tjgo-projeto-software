@@ -1,6 +1,6 @@
 
 
-# Histórias de Usuário por Papel
+# Histórias de Usuário
 
 ## Gerente de Equipe
 - Como gerente de equipe, quero criar e atribuir tarefas para organizar o trabalho do time.
