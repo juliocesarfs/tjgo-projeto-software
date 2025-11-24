@@ -190,6 +190,8 @@ Principais casos de uso do sistema, organizados por pacotes:
 ![Diagrama de Casos de Uso UML](imagens/Casos-de-uso.png)
 
 ### Diagrama C4 - Contexto
-![Diagrama de Casos de Uso UML](imagens/C4-Contexto.png)
+![Diagrama C4 de Contexto](imagens/C4-Contexto.png)
 
 
+### Diagrama C4 - Container
+![Diagrama C4 de Container](imagens/C4-Container.png)
