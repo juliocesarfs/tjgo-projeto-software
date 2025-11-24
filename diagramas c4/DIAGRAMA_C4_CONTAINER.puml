@@ -14,6 +14,16 @@ Person(adminPerson, "Admin", "Administrador do sistema")
 
 System_Boundary(controlTasksSystem, "Control Tasks System") {
     ' ============================================================================
+    ' CONTAINER: WEB APPLICATION
+    ' ============================================================================
+    Container(webApp, "Web Application", "React / TypeScript", "Interface web responsiva para:\n- Gerenciamento de tarefas\n- Colaboração em equipe\n- Visualização de estatísticas\n- Notificações em tempo real")
+
+    ' ============================================================================
+    ' CONTAINER: MOBILE APPLICATION
+    ' ============================================================================
+    Container(mobileApp, "Mobile Application", "React Native", "Aplicativo mobile para:\n- Acesso offline limitado\n- Sincronização com nuvem\n- Notificações push\n- Interface adaptada a dispositivos móveis")
+
+    ' ============================================================================
     ' CONTAINER: API REST
     ' ============================================================================
     Container(apiRest, "API REST", "NestJS 11 / TypeScript", "Aplicação backend responsável por:\n- Endpoints HTTP (Controllers)\n- Lógica de negócio (Use Cases)\n- Modelos de domínio (Entities)\n- Validação de entrada (DTOs)\n- Autenticação e autorização")
@@ -24,19 +34,24 @@ System_Boundary(controlTasksSystem, "Control Tasks System") {
     Container(postgresDB, "Database", "PostgreSQL 12+", "Armazena:\n- Usuários (User)\n- Notas/Tarefas (Note)\n- Times (Team)\n- API Tokens (ApiToken)\n- Relacionamentos entre entidades")
 
     ' ============================================================================
-    ' CONTAINER: CACHE (FUTURO)
+    ' CONTAINER: CACHE SERVICE
     ' ============================================================================
-    Container(cacheService, "Cache Service", "Redis (Opcional)", "Armazena em cache:\n- Dados de usuário\n- Notas frequentes\n- Tokens\n- Resultados de queries")
+    Container(cacheService, "Cache Service", "Redis", "Armazena em cache:\n- Dados de usuário\n- Notas frequentes\n- Tokens\n- Resultados de queries")
 }
 
-System_Ext(emailService, "Email Service", "SendGrid/AWS SES\n(Futuro)", "Notificações via email")
+System_Ext(emailService, "Email Service", "SendGrid/AWS SES", "Notificações via email")
 
 ' ============================================================================
 ' RELACIONAMENTOS EXTERNO
 ' ============================================================================
 
-Rel(userPerson, apiRest, "Usa", "HTTP/REST\nJSON\nBearer Token (JWT)")
-Rel(adminPerson, apiRest, "Gerencia via", "HTTP/REST\nJSON\nBearer Token (JWT)")
+Rel(userPerson, webApp, "Acessa via navegador", "HTTPS")
+Rel(userPerson, mobileApp, "Acessa via app", "HTTPS")
+Rel(adminPerson, webApp, "Gerencia via navegador", "HTTPS")
+Rel(adminPerson, mobileApp, "Gerencia via app", "HTTPS")
+
+Rel(webApp, apiRest, "Faz requisições API", "HTTP/REST\nJSON\nBearer Token (JWT)")
+Rel(mobileApp, apiRest, "Faz requisições API", "HTTP/REST\nJSON\nBearer Token (JWT)")
 
 ' ============================================================================
 ' RELACIONAMENTOS INTERNOS
@@ -48,11 +63,29 @@ Rel(postgresDB, apiRest, "Retorna dados", "Queries result")
 Rel(apiRest, cacheService, "Lê/Escreve cache", "Redis Protocol")
 Rel(cacheService, apiRest, "Retorna dados em cache", "Cache hit/miss")
 
-Rel_D(apiRest, emailService, "Envia notificações", "SMTP/API\n(Futuro)")
+Rel(apiRest, emailService, "Envia notificações", "SMTP/API")
 
 ' ============================================================================
 ' NOTAS
 ' ============================================================================
+
+note right of webApp
+  **Funcionalidades:**
+  - Dashboard de tarefas
+  - Formulários de criação/edição
+  - Visualização de times
+  - Notificações web
+  - Responsivo para desktop/mobile
+end note
+
+note right of mobileApp
+  **Funcionalidades:**
+  - Interface nativa mobile
+  - Sincronização offline
+  - Push notifications
+  - Gestos touch
+  - Otimizado para iOS/Android
+end note
 
 note right of apiRest
   **Responsabilidades:**
@@ -85,7 +118,7 @@ note right of postgresDB
 end note
 
 note right of cacheService
-  **Futuro:**
+  **Uso:**
   - Cache de sessões
   - Cache de queries
   - Rate limiting
