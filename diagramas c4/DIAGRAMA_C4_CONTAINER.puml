@@ -31,12 +31,12 @@ System_Boundary(controlTasksSystem, "Control Tasks System") {
     ' ============================================================================
     ' CONTAINER: DATABASE
     ' ============================================================================
-    Container(postgresDB, "Database", "PostgreSQL 12+", "Armazena:\n- Usuários (User)\n- Notas/Tarefas (Note)\n- Times (Team)\n- API Tokens (ApiToken)\n- Relacionamentos entre entidades")
+    Container(postgresDB, "Database", "PostgreSQL 12+", "Armazena:\n- Usuários (User)\n- Notas/Tarefas (Note)\n- Times (Team)\n- Relacionamentos entre entidades")
 
     ' ============================================================================
     ' CONTAINER: CACHE SERVICE
     ' ============================================================================
-    Container(cacheService, "Cache Service", "Redis", "Armazena em cache:\n- Dados de usuário\n- Notas frequentes\n- Tokens\n- Resultados de queries")
+    Container(cacheService, "Cache Service", "Redis", "Armazena em cache:\n- Dados de usuário\n- Notas frequentes\n- Resultados de queries")
 }
 
 System_Ext(emailService, "Email Service", "SendGrid/AWS SES", "Notificações via email")
@@ -89,7 +89,7 @@ end note
 
 note right of apiRest
   **Responsabilidades:**
-  - Autenticação (JWT/API Tokens)
+  - Autenticação e Autorização
   - CRUD de Notas
   - CRUD de Usuários
   - Gerenciamento de Times
@@ -108,13 +108,11 @@ note right of postgresDB
   - User (email, name, password, type)
   - Note (title, status, priority, dueDate)
   - Team (name, code, adminId)
-  - ApiToken (token, userId, expiresAt)
 
   **Índices em:**
   - email, teamId
   - createdById, assignedToId
   - status, category
-  - token, userId
 end note
 
 note right of cacheService
