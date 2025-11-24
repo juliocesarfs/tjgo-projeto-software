@@ -9,20 +9,20 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
 ## 1. Desempenho e Eficiência
 
 **NF1.1 — Tempo de Resposta**
-- O sistema (API, Web e Mobile) deve responder a 95% das requisições em até 2 segundos, medido em ambiente de produção sob carga típica.
-- Critério: Testes de carga automatizados devem comprovar o atendimento deste requisito em todos os canais.
+- O sistema (API, Web e Mobile) deve responder a 95% das requisições em até 5 segundos.
+- Critério: Testes de carga automatizados.
 
 **NF1.2 — Autenticação Rápida**
-- O tempo de resposta para autenticação de usuário (login) não deve exceder 1 segundo em 99% dos casos, tanto no app quanto no navegador.
-- Critério: Logs de autenticação e testes automatizados devem comprovar o atendimento.
+- O tempo de resposta para autenticação de usuário (login) não deve exceder 2 segundo em 80% dos casos.
+- Critério: Logs de autenticação e testes automatizados.
 
 **NF1.3 — Suporte a Usuários Simultâneos**
-- O sistema deve suportar pelo menos 500 usuários autenticados simultaneamente em múltiplos canais (web, mobile) sem degradação perceptível de desempenho.
-- Critério: Testes de estresse devem comprovar o atendimento.
+- O sistema deve suportar pelo menos 500 usuários autenticados simultaneamente em múltiplos canais.
+- Critério: Testes de estresse.
 
 **NF1.4 — Sincronização Multiplataforma**
-- Alterações feitas em um canal (web ou mobile) devem refletir nos demais em até 5 segundos.
-- Critério: Testes de sincronização e notificações em tempo real.
+- Sincronização entre canais em até 5 segundos.
+- Critério: Testes de sincronização e notificações.
 
 ## 2. Segurança
 
@@ -45,12 +45,12 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
 ## 3. Confiabilidade
 
 **NF3.1 — Disponibilidade**
-- O sistema deve estar disponível 99,5% do tempo durante o horário comercial (8h-18h), exceto em janelas de manutenção previamente comunicadas.
-- Critério: Monitoramento de uptime e relatórios de disponibilidade.
+- Disponibilidade de 99,5% durante horário comercial, exceto manutenções.
+- Critério: Monitoramento de uptime.
 
 **NF3.2 — Backup Diário**
-- Backups completos do banco de dados devem ser realizados diariamente e armazenados em local seguro.
-- Critério: Logs de backup e testes de restauração periódicos.
+- Backups semanais do banco de dados em local seguro.
+- Critério: Logs de backup e testes de restauração.
 
 **NF3.3 — Recuperação Rápida**
 - Deve ser possível restaurar o sistema a partir de um backup em até 2 horas após incidente crítico.
