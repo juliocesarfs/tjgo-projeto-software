@@ -107,7 +107,7 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
 - **Locais**: `src/infra/notes-system.module.ts:32` e `src/infra/auth/auth.module.ts:19`
 
 #### RNF-02: Guard de autenticação
-- **Implementação**: `ApiTokenGuard`
+- **Implementação**: Middleware de validação JWT
 - **Funcionalidade**:
   - Validar presença do header `Authorization: Bearer <token>`
   - Verificar assinatura do token
@@ -143,8 +143,6 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
   - Note.teamId (filtros por time)
   - Note.status (filtros por status)
   - Note.category (filtros por categoria)
-  - ApiToken.token (busca rápida de token)
-  - ApiToken.userId (tokens por usuário)
 
 ### 8.3 Arquitetura e Padrões
 
@@ -153,7 +151,7 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
 - **Separação**: Lógica de negócio isolada de frameworks
 
 #### RNF-08: Repository Pattern
-- **Implementação**: `PrismaUserRepository`, `PrismaNoteRepository`, `PrismaApiTokenRepository`
+- **Implementação**: `PrismaUserRepository`, `PrismaNoteRepository`
 - **Abstração**: Operações de banco de dados isoladas
 - **Flexibilidade**: Trocar implementação sem afetar lógica
 
@@ -212,7 +210,6 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
 - **One-to-Many**: User → Notes (criadas e atribuídas)
 - **One-to-One**: Team → Admin User
 - **Many-to-Many**: User ↔ Team (membros)
-- **Cascade delete**: ApiToken deletado quando User deletado
 
 #### RNF-17: Timestamp automático
 - **created_at**: Preenchido automaticamente na criação
