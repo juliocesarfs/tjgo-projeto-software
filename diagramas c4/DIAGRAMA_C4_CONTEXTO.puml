@@ -34,7 +34,7 @@ System(controlTasks, "Control Tasks", "Sistema de Gerenciamento de Tarefas, via 
 ' ============================================================================
 ' SISTEMAS EXTERNOS (FUTURO)
 ' ============================================================================
-System_Ext(emailService, "Email Service API", "API externa para envio de emails transacionais e notificações aos usuários")
+System_Ext(emailService, "Email Service API", "SendGrid/AWS SES", "API externa para envio de emails transacionais e notificações aos usuários")
 
 ' ============================================================================
 ' RELACIONAMENTOS
