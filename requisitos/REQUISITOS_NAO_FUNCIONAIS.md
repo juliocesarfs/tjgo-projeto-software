@@ -93,3 +93,127 @@ Os requisitos abaixo estão organizados conforme as características de qualidad
 **NF7.1 — Ambientes de Implantação**
 - O sistema deve ser implantável em ambientes Windows e Linux sem necessidade de grandes adaptações.
 - Critério: Testes de implantação em ambos os ambientes.
+
+---
+
+## 8. Detalhes de Implementação Técnica
+
+### 8.1 Segurança
+
+#### RNF-01: Autenticação baseada em Token
+- **Tipo**: JWT (JSON Web Tokens)
+- **Secret**: Hardcoded (DEVE ser movido para variáveis de ambiente)
+- **Valor atual**: '8b6c-fef4-4d7d-b8ab-74kl-3729'
+- **Locais**: `src/infra/notes-system.module.ts:32` e `src/infra/auth/auth.module.ts:19`
+
+#### RNF-02: Guard de autenticação
+- **Implementação**: `ApiTokenGuard`
+- **Funcionalidade**:
+  - Validar presença do header `Authorization: Bearer <token>`
+  - Verificar assinatura do token
+  - Descodificar e validar conteúdo
+  - Anexar informações do usuário ao request object
+
+#### RNF-03: CORS (Cross-Origin Resource Sharing)
+- **Configuração atual**: Permissiva para desenvolvimento
+- **Origem**: Aceita qualquer origem
+- **Métodos**: GET, POST, PUT, DELETE, OPTIONS
+- **Headers**: Content-Type, Authorization
+- **Credenciais**: Habilitadas
+- **Recomendação**: Restringir para produção
+
+#### RNF-04: Validação de entrada
+- **Framework**: class-validator com decorators
+- **Aplicação**: Todos os DTOs validam campos antes de usar
+- **Tipagem**: class-transformer para transformação de tipos
+
+#### RNF-05: Segurança de dados sensíveis
+- **Senhas**: Nunca retornar em respostas
+- **Tokens**: Retornar apenas após autenticação bem-sucedida
+- **Dados pessoais**: Respeitar permissões de acesso
+
+### 8.2 Performance e Escalabilidade
+
+#### RNF-06: Indexação de banco de dados
+- **Índices implementados**:
+  - User.email (busca por email)
+  - User.teamId (filtros por time)
+  - Note.createdById (filtros por criador)
+  - Note.assignedToId (filtros por responsável)
+  - Note.teamId (filtros por time)
+  - Note.status (filtros por status)
+  - Note.category (filtros por categoria)
+  - ApiToken.token (busca rápida de token)
+  - ApiToken.userId (tokens por usuário)
+
+### 8.3 Arquitetura e Padrões
+
+#### RNF-07: Clean Architecture
+- **Camadas**: Application, Infrastructure
+- **Separação**: Lógica de negócio isolada de frameworks
+
+#### RNF-08: Repository Pattern
+- **Implementação**: `PrismaUserRepository`, `PrismaNoteRepository`, `PrismaApiTokenRepository`
+- **Abstração**: Operações de banco de dados isoladas
+- **Flexibilidade**: Trocar implementação sem afetar lógica
+
+#### RNF-09: Use Case Pattern
+- **Estrutura**: Cada operação em classe dedicada com método `execute()`
+- **Responsabilidade única**: Um caso de uso, uma operação
+- **Testabilidade**: Casos de uso testáveis independentemente
+
+#### RNF-10: Dependency Injection
+- **Framework**: NestJS built-in DI container
+- **Benefit**: Módulos e dependências declaradas explicitamente
+
+#### RNF-11: DTOs (Data Transfer Objects)
+- **Uso**: Validação e transformação de dados de entrada
+- **Bibliotecas**: class-validator, class-transformer
+- **Aplicação**: Separação entre entrada e lógica
+
+### 8.4 Tratamento de Erros
+
+#### RNF-12: Respostas padronizadas
+- **Formato**:
+  ```json
+  {
+    "success": boolean,
+    "message": string,
+    "data": any
+  }
+  ```
+- **Uso**: Todos os endpoints devem retornar formato consistente
+
+#### RNF-13: Códigos de status HTTP
+- **201**: Criação bem-sucedida
+- **200**: Operação bem-sucedida
+- **400**: Erro de validação / requisição inválida
+- **401**: Não autenticado
+- **403**: Não autorizado
+- **404**: Recurso não encontrado
+- **500**: Erro interno do servidor
+
+#### RNF-14: Tratamento de exceções
+- **HttpException**: Lançadas em controllers para erros específicos
+- **Try-catch**: Implementado em todos os endpoints
+- **Mensagens**: Informativos úteis para clientes
+
+### 8.5 Banco de Dados
+
+#### RNF-15: ORM Prisma
+- **Versão**: 6.16
+- **Provider**: PostgreSQL
+- **Benefícios**:
+  - Type-safe queries
+  - Migrations automáticas
+  - Schema versioning
+
+#### RNF-16: Relacionamentos
+- **One-to-Many**: User → Notes (criadas e atribuídas)
+- **One-to-One**: Team → Admin User
+- **Many-to-Many**: User ↔ Team (membros)
+- **Cascade delete**: ApiToken deletado quando User deletado
+
+#### RNF-17: Timestamp automático
+- **created_at**: Preenchido automaticamente na criação
+- **updated_at**: Atualizado automaticamente em modificações
