@@ -33,10 +33,6 @@ System_Boundary(controlTasksSystem, "Control Tasks System") {
     ' ============================================================================
     Container(postgresDB, "Database", "PostgreSQL 12+", "Armazena:\n- Usuários (User)\n- Notas/Tarefas (Note)\n- Times (Team)\n- Relacionamentos entre entidades")
 
-    ' ============================================================================
-    ' CONTAINER: CACHE SERVICE
-    ' ============================================================================
-    Container(cacheService, "Cache Service", "Redis", "Armazena em cache:\n- Dados de usuário\n- Notas frequentes\n- Resultados de queries")
 }
 
 System_Ext(emailService, "Email Service", "SendGrid/AWS SES", "Notificações via email")
@@ -59,9 +55,6 @@ Rel(mobileApp, apiRest, "Faz requisições API", "HTTP/REST\nJSON\nBearer Token 
 
 Rel(apiRest, postgresDB, "Lê/Escreve dados", "SQL via Prisma ORM\nConnection Pool")
 Rel(postgresDB, apiRest, "Retorna dados", "Queries result")
-
-Rel(apiRest, cacheService, "Lê/Escreve cache", "Redis Protocol")
-Rel(cacheService, apiRest, "Retorna dados em cache", "Cache hit/miss")
 
 Rel(apiRest, emailService, "Envia notificações", "SMTP/API")
 
@@ -113,14 +106,6 @@ note right of postgresDB
   - email, teamId
   - createdById, assignedToId
   - status, category
-end note
-
-note right of cacheService
-  **Uso:**
-  - Cache de sessões
-  - Cache de queries
-  - Rate limiting
-  - Sessions storage
 end note
 
 @enduml
