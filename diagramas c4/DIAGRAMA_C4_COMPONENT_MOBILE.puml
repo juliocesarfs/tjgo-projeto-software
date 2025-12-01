@@ -39,12 +39,6 @@ Container_Boundary(mobileAppContainer, "Mobile Application - React Native") {
     ' ============================================================================
     Component(noteItem, "Note Item", "React Native Component", "Item de nota:\n- Layout responsivo\n- Swipe actions\n- Status visual")
     
-    Component(customHeader, "Custom Header", "React Native Component", "Cabeçalho customizado:\n- Título dinâmico\n- Botões de ação\n- Notificações badge")
-    
-    Component(floatingButton, "Floating Button", "React Native Component", "Botão flutuante:\n- Criar nova nota\n- Animações\n- Posição fixa")
-    
-    Component(loadingOverlay, "Loading Overlay", "React Native Component", "Overlay de loading:\n- Spinner animado\n- Bloqueio de interação\n- Mensagens de status")
-
     ' ============================================================================
     ' LAYER: SERVICES
     ' ============================================================================
@@ -101,10 +95,7 @@ Rel(tabNavigator, profileScreen, "Tab navigation", "Bottom Tab")
 ' RELACIONAMENTOS - SCREENS → COMPONENTS
 ' ============================================================================
 
-Rel(dashboardScreen, customHeader, "Usa", "React Props")
-Rel(dashboardScreen, floatingButton, "Usa", "React Props")
 Rel(notesListScreen, noteItem, "Renderiza lista", "FlatList")
-Rel(notesListScreen, loadingOverlay, "Mostra loading", "Conditional")
 
 ' ============================================================================
 ' RELACIONAMENTOS - SCREENS → HOOKS
@@ -131,9 +122,9 @@ Rel(usePushNotifications, pushNotificationService, "Usa", "Function Call")
 ' RELACIONAMENTOS - SERVICES → EXTERNAL
 ' ============================================================================
 
-Rel(authServiceMobile, apiRest, "Autenticação", "HTTP/REST")
+Rel(authServiceMobile, apiServiceMobile, "Usa para autenticação", "HTTP Client")
 Rel(authServiceMobile, biometricAuth, "Biometria", "Native Module")
-Rel(apiServiceMobile, apiRest, "Requisições CRUD", "HTTP/REST")
+Rel(apiServiceMobile, apiRest, "Todas as requisições", "HTTP/REST")
 Rel(pushNotificationService, pushService, "Registra token", "Push API")
 Rel(storageService, notesContext, "Carrega cache", "AsyncStorage")
 
