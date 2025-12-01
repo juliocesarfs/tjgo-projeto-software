@@ -36,6 +36,10 @@ Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
     Component(listNotes, "List Notes", "Use Case", "Lógica para listar notas:\n- Aplicar filtros\n- Implementar paginação\n- Retornar resultados")
     
     Component(updateNote, "Update Note", "Use Case", "Lógica para atualizar nota:\n- Validar permissões\n- Aplicar mudanças\n- Atualizar timestamps")
+    
+    Component(manageTeam, "Manage Team", "Use Case", "Lógica para gerenciar times:\n- Criar/editar times\n- Adicionar/remover membros\n- Validar permissões de admin")
+    
+    Component(getUserWithTeam, "Get User With Team", "Use Case", "Buscar usuário com dados do time:\n- Carregar dados do usuário\n- Incluir informações do time\n- Verificar permissões")
 
     ' ============================================================================
     ' LAYER: DOMAIN ENTITIES
@@ -79,6 +83,8 @@ Rel(userController, authenticateUser, "Chama", "Dependency Injection")
 Rel(noteController, createNote, "Chama", "Dependency Injection")
 Rel(noteController, listNotes, "Chama", "Dependency Injection")
 Rel(noteController, updateNote, "Chama", "Dependency Injection")
+Rel(userController, manageTeam, "Chama", "Dependency Injection")
+Rel(userController, getUserWithTeam, "Chama", "Dependency Injection")
 
 ' ============================================================================
 ' RELACIONAMENTOS INTERNOS - USE CASES → ENTITIES & REPOSITORIES
@@ -94,6 +100,13 @@ Rel(createNote, noteRepo, "Persiste dados", "Repository Pattern")
 Rel(listNotes, noteRepo, "Busca com filtros", "Repository Pattern")
 Rel(updateNote, noteEntity, "Aplica regras", "Domain Logic")
 Rel(updateNote, noteRepo, "Atualiza dados", "Repository Pattern")
+
+Rel(manageTeam, teamEntity, "Instancia e valida", "Domain Logic")
+Rel(manageTeam, teamRepo, "Persiste/atualiza dados", "Repository Pattern")
+Rel(getUserWithTeam, userEntity, "Carrega usuário", "Domain Logic")
+Rel(getUserWithTeam, teamEntity, "Carrega dados do time", "Domain Logic")
+Rel(getUserWithTeam, userRepo, "Busca usuário", "Repository Pattern")
+Rel(getUserWithTeam, teamRepo, "Busca time", "Repository Pattern")
 
 ' ============================================================================
 ' RELACIONAMENTOS INTERNOS - REPOSITORIES → DATABASE

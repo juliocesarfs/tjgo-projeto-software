@@ -34,10 +34,6 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
     
     Component(sidebar, "Sidebar", "React Component", "Menu lateral:\n- Navegação principal\n- Filtros rápidos\n- User info")
     
-    Component(header, "Header", "React Component", "Cabeçalho:\n- Logo/título\n- Notificações\n- Menu do usuário")
-    
-    Component(loadingSpinner, "Loading Spinner", "React Component", "Indicador de carregamento:\n- Estados de loading\n- Feedback visual")
-
     ' ============================================================================
     ' LAYER: SERVICES
     ' ============================================================================
@@ -54,8 +50,6 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
     
     Component(notesStore, "Notes Store", "Zustand/Context", "Estado das notas:\n- Lista de notas\n- Filtros ativos\n- Cache local")
     
-    Component(uiStore, "UI Store", "Zustand/Context", "Estado da interface:\n- Loading states\n- Modal states\n- Theme settings")
-
     ' ============================================================================
     ' LAYER: HOOKS
     ' ============================================================================
@@ -73,22 +67,23 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
 Rel(userPerson, loginPage, "Acessa", "HTTPS")
 Rel(userPerson, dashboardPage, "Navega", "SPA Navigation")
 Rel(userPerson, notesPage, "Gerencia tarefas", "User Interaction")
+Rel(userPerson, noteFormPage, "Cria/edita notas", "User Interaction")
+Rel(userPerson, profilePage, "Gerencia perfil", "User Interaction")
 
 ' ============================================================================
 ' RELACIONAMENTOS - PAGES → COMPONENTS
 ' ============================================================================
 
-Rel(dashboardPage, header, "Usa", "React Props")
+
 Rel(dashboardPage, sidebar, "Usa", "React Props")
 Rel(dashboardPage, noteCard, "Renderiza", "React Props")
 
-Rel(notesPage, header, "Usa", "React Props")
+
 Rel(notesPage, sidebar, "Usa", "React Props")
 Rel(notesPage, noteCard, "Renderiza lista", "React Props")
-Rel(notesPage, loadingSpinner, "Mostra loading", "Conditional Render")
 
-Rel(noteFormPage, header, "Usa", "React Props")
-Rel(noteFormPage, loadingSpinner, "Mostra loading", "Conditional Render")
+
+Rel(profilePage, sidebar, "Usa", "React Props")
 
 ' ============================================================================
 ' RELACIONAMENTOS - PAGES → HOOKS
@@ -100,6 +95,8 @@ Rel(dashboardPage, useNotes, "Usa", "React Hook")
 Rel(notesPage, useNotes, "Usa", "React Hook")
 Rel(noteFormPage, useNotes, "Usa", "React Hook")
 Rel(profilePage, useAuth, "Usa", "React Hook")
+Rel(dashboardPage, useNotifications, "Usa", "React Hook")
+Rel(notesPage, useNotifications, "Usa", "React Hook")
 
 ' ============================================================================
 ' RELACIONAMENTOS - HOOKS → SERVICES & STORES
@@ -110,20 +107,18 @@ Rel(useAuth, authStore, "Atualiza", "State Update")
 Rel(useNotes, apiService, "Chama", "Function Call")
 Rel(useNotes, notesStore, "Atualiza", "State Update")
 Rel(useNotifications, notificationService, "Chama", "Function Call")
-
 ' ============================================================================
 ' RELACIONAMENTOS - SERVICES → STORES
 ' ============================================================================
 
 Rel(authService, authStore, "Atualiza estado", "State Management")
-Rel(notificationService, uiStore, "Atualiza UI", "State Management")
 
 ' ============================================================================
 ' RELACIONAMENTOS - SERVICES → API EXTERNA
 ' ============================================================================
 
-Rel(authService, apiRest, "Faz autenticação", "HTTP/REST")
-Rel(apiService, apiRest, "Requisições CRUD", "HTTP/REST")
-Rel(notificationService, apiRest, "WebSocket/SSE", "Real-time")
+Rel(authService, apiService, "Usa para autenticação", "HTTP Client")
+Rel(notificationService, apiService, "Usa para WebSocket/SSE", "HTTP Client")
+Rel(apiService, apiRest, "Todas as requisições", "HTTP/REST")
 
 @enduml
