@@ -199,7 +199,7 @@ Principais casos de uso do sistema, organizados por pacotes:
 ## Diagrama C4 de Componentes
 
 ### C4 - Component Api
-![Diagrama C4 de Componente](imagens/C4_Component.png)
+![Diagrama C4 de Componente](imagens/C4_Component_Api.png)
 
 ### C4 - Component Web
 ![Diagrama C4 de Componente Web](imagens/C4_Component_Web.png)
