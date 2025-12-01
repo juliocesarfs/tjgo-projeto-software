@@ -1,0 +1,140 @@
+@startuml C4_Component_ControlTasks_Mobile
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' ============================================================================
+' COMPONENT DIAGRAM - Level 3
+' Control Tasks Mobile Application - Componentes React Native
+' ============================================================================
+
+LAYOUT_WITH_LEGEND()
+
+Person(userPerson, "User", "Usuário do sistema")
+System_Ext(apiRest, "API REST", "Backend NestJS/TypeScript")
+
+Container_Boundary(mobileAppContainer, "Mobile Application - React Native") {
+    
+    ' ============================================================================
+    ' LAYER: SCREENS/NAVIGATION
+    ' ============================================================================
+    Component(loginScreen, "Login Screen", "React Native Screen", "Tela de autenticação:\n- Input de credenciais\n- Biometria/FaceID\n- Validação offline")
+    
+    Component(dashboardScreen, "Dashboard Screen", "React Native Screen", "Tela principal:\n- Cards de tarefas\n- Estatísticas rápidas\n- Ações principais")
+    
+    Component(notesListScreen, "Notes List Screen", "React Native Screen", "Lista de notas:\n- FlatList otimizada\n- Pull-to-refresh\n- Busca e filtros")
+    
+    Component(noteDetailScreen, "Note Detail Screen", "React Native Screen", "Detalhes da nota:\n- Visualização completa\n- Edição inline\n- Ações contextuais")
+    
+    Component(profileScreen, "Profile Screen", "React Native Screen", "Perfil do usuário:\n- Dados pessoais\n- Configurações do app\n- Sincronização")
+
+    ' ============================================================================
+    ' LAYER: NAVIGATION
+    ' ============================================================================
+    Component(stackNavigator, "Stack Navigator", "React Navigation", "Navegação em pilha:\n- Transições entre telas\n- Header customizado\n- Gestos de volta")
+    
+    Component(tabNavigator, "Tab Navigator", "React Navigation", "Navegação por abas:\n- Bottom tabs\n- Ícones e badges\n- Navegação rápida")
+
+    ' ============================================================================
+    ' LAYER: COMPONENTS (UI)
+    ' ============================================================================
+    Component(noteItem, "Note Item", "React Native Component", "Item de nota:\n- Layout responsivo\n- Swipe actions\n- Status visual")
+    
+    Component(customHeader, "Custom Header", "React Native Component", "Cabeçalho customizado:\n- Título dinâmico\n- Botões de ação\n- Notificações badge")
+    
+    Component(floatingButton, "Floating Button", "React Native Component", "Botão flutuante:\n- Criar nova nota\n- Animações\n- Posição fixa")
+    
+    Component(loadingOverlay, "Loading Overlay", "React Native Component", "Overlay de loading:\n- Spinner animado\n- Bloqueio de interação\n- Mensagens de status")
+
+    ' ============================================================================
+    ' LAYER: SERVICES
+    ' ============================================================================
+    Component(authServiceMobile, "Auth Service", "TypeScript Service", "Autenticação mobile:\n- Login com biometria\n- Keychain/Keystore\n- Token refresh")
+    
+    Component(apiServiceMobile, "API Service", "TypeScript Service", "Cliente da API:\n- HTTP client\n- Retry logic\n- Network detection")
+    
+    Component(storageService, "Storage Service", "AsyncStorage/SQLite", "Armazenamento local:\n- Cache de dados\n- Configurações\n- Dados offline")
+    
+    Component(pushNotificationService, "Push Notification Service", "Firebase/APNs", "Notificações push:\n- Registro de token\n- Handling de mensagens\n- Badge management")
+
+    ' ============================================================================
+    ' LAYER: STATE MANAGEMENT
+    ' ============================================================================
+    Component(authContext, "Auth Context", "React Context", "Contexto de auth:\n- Estado global do usuário\n- Persistência de sessão\n- Logout automático")
+    
+    Component(notesContext, "Notes Context", "React Context", "Contexto de notas:\n- Cache local\n- Sincronização\n- Estado offline")
+    
+    Component(appContext, "App Context", "React Context", "Contexto do app:\n- Configurações globais\n- Theme management\n- Network status")
+
+    ' ============================================================================
+    ' LAYER: HOOKS
+    ' ============================================================================
+    Component(useAuthMobile, "useAuth Hook", "Custom Hook", "Hook de autenticação:\n- Biometria integration\n- Auto-login\n- Token management")
+    
+    Component(useOfflineSync, "useOfflineSync Hook", "Custom Hook", "Hook de sincronização:\n- Detecção de rede\n- Queue de requests\n- Sync automático")
+    
+    Component(usePushNotifications, "usePushNotifications Hook", "Custom Hook", "Hook de notificações:\n- Permission handling\n- Token registration\n- Message processing")
+}
+
+System_Ext(biometricAuth, "Biometric Auth", "iOS FaceID/TouchID, Android Fingerprint")
+System_Ext(pushService, "Push Service", "Firebase Cloud Messaging / APNs")
+
+' ============================================================================
+' RELACIONAMENTOS EXTERNOS
+' ============================================================================
+
+Rel(userPerson, loginScreen, "Acessa app", "Touch/Gestures")
+Rel(userPerson, dashboardScreen, "Navega", "Touch Navigation")
+
+' ============================================================================
+' RELACIONAMENTOS - NAVIGATION
+' ============================================================================
+
+Rel(stackNavigator, loginScreen, "Navega para", "Screen Transition")
+Rel(stackNavigator, dashboardScreen, "Navega para", "Screen Transition")
+Rel(stackNavigator, noteDetailScreen, "Navega para", "Screen Transition")
+
+Rel(tabNavigator, dashboardScreen, "Tab navigation", "Bottom Tab")
+Rel(tabNavigator, notesListScreen, "Tab navigation", "Bottom Tab")
+Rel(tabNavigator, profileScreen, "Tab navigation", "Bottom Tab")
+
+' ============================================================================
+' RELACIONAMENTOS - SCREENS → COMPONENTS
+' ============================================================================
+
+Rel(dashboardScreen, customHeader, "Usa", "React Props")
+Rel(dashboardScreen, floatingButton, "Usa", "React Props")
+Rel(notesListScreen, noteItem, "Renderiza lista", "FlatList")
+Rel(notesListScreen, loadingOverlay, "Mostra loading", "Conditional")
+
+' ============================================================================
+' RELACIONAMENTOS - SCREENS → HOOKS
+' ============================================================================
+
+Rel(loginScreen, useAuthMobile, "Usa", "React Hook")
+Rel(dashboardScreen, useAuthMobile, "Usa", "React Hook")
+Rel(dashboardScreen, useOfflineSync, "Usa", "React Hook")
+Rel(notesListScreen, useOfflineSync, "Usa", "React Hook")
+Rel(profileScreen, usePushNotifications, "Usa", "React Hook")
+
+' ============================================================================
+' RELACIONAMENTOS - HOOKS → SERVICES & CONTEXT
+' ============================================================================
+
+Rel(useAuthMobile, authServiceMobile, "Chama", "Function Call")
+Rel(useAuthMobile, authContext, "Atualiza", "Context Update")
+Rel(useOfflineSync, apiServiceMobile, "Chama", "Function Call")
+Rel(useOfflineSync, storageService, "Usa cache", "Local Storage")
+Rel(useOfflineSync, notesContext, "Atualiza", "Context Update")
+Rel(usePushNotifications, pushNotificationService, "Usa", "Function Call")
+
+' ============================================================================
+' RELACIONAMENTOS - SERVICES → EXTERNAL
+' ============================================================================
+
+Rel(authServiceMobile, apiRest, "Autenticação", "HTTP/REST")
+Rel(authServiceMobile, biometricAuth, "Biometria", "Native Module")
+Rel(apiServiceMobile, apiRest, "Requisições CRUD", "HTTP/REST")
+Rel(pushNotificationService, pushService, "Registra token", "Push API")
+Rel(storageService, notesContext, "Carrega cache", "AsyncStorage")
+
+@enduml

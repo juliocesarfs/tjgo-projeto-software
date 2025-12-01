@@ -1,0 +1,120 @@
+@startuml C4_Component_ControlTasks_API
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' ============================================================================
+' COMPONENT DIAGRAM - Level 3
+' Control Tasks API - Componentes Internos da API REST
+' ============================================================================
+
+LAYOUT_WITH_LEGEND()
+
+Person(userPerson, "User", "Usuário do sistema")
+System_Ext(webApp, "Web Application", "Interface web React/TypeScript")
+System_Ext(mobileApp, "Mobile Application", "Aplicativo React Native")
+
+Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
+    
+    ' ============================================================================
+    ' LAYER: CONTROLLERS (HTTP Interface)
+    ' ============================================================================
+    Component(userController, "User Controller", "NestJS Controller", "Endpoints HTTP para:\n- POST /users (criar)\n- POST /users/authenticate\n- GET /users/:id\n- PUT /users/:id")
+    
+    Component(noteController, "Note Controller", "NestJS Controller", "Endpoints HTTP para:\n- POST /notes\n- GET /notes (com filtros)\n- GET /notes/:id\n- PUT /notes/:id\n- DELETE /notes/:id")
+    
+    Component(authGuard, "Auth Guard", "NestJS Guard", "Middleware JWT para:\n- Validar tokens\n- Extrair dados do usuário\n- Proteger rotas")
+
+    ' ============================================================================
+    ' LAYER: USE CASES (Business Logic)
+    ' ============================================================================
+    Component(createUser, "Create User", "Use Case", "Lógica para criar usuário:\n- Validar dados\n- Hash da senha\n- Persistir no banco")
+    
+    Component(authenticateUser, "Authenticate User", "Use Case", "Lógica de autenticação:\n- Validar credenciais\n- Gerar JWT token\n- Retornar dados do usuário")
+    
+    Component(createNote, "Create Note", "Use Case", "Lógica para criar nota:\n- Validar dados\n- Associar ao usuário\n- Persistir no banco")
+    
+    Component(listNotes, "List Notes", "Use Case", "Lógica para listar notas:\n- Aplicar filtros\n- Implementar paginação\n- Retornar resultados")
+    
+    Component(updateNote, "Update Note", "Use Case", "Lógica para atualizar nota:\n- Validar permissões\n- Aplicar mudanças\n- Atualizar timestamps")
+
+    ' ============================================================================
+    ' LAYER: DOMAIN ENTITIES
+    ' ============================================================================
+    Component(userEntity, "User Entity", "Domain Model", "Entidade de domínio:\n- Propriedades (email, name, type)\n- Métodos de validação\n- Regras de negócio")
+    
+    Component(noteEntity, "Note Entity", "Domain Model", "Entidade de domínio:\n- Propriedades (title, status, priority)\n- Transições de estado\n- Validações de negócio")
+    
+    Component(teamEntity, "Team Entity", "Domain Model", "Entidade de domínio:\n- Propriedades (name, code, adminId)\n- Relacionamentos\n- Validações")
+
+    ' ============================================================================
+    ' LAYER: REPOSITORIES (Data Access)
+    ' ============================================================================
+    Component(userRepo, "User Repository", "Prisma Repository", "Acesso a dados de usuários:\n- CRUD operations\n- Queries específicas\n- Abstração do Prisma")
+    
+    Component(noteRepo, "Note Repository", "Prisma Repository", "Acesso a dados de notas:\n- CRUD operations\n- Filtros e buscas\n- Relacionamentos")
+    
+    Component(teamRepo, "Team Repository", "Prisma Repository", "Acesso a dados de times:\n- CRUD operations\n- Gestão de membros\n- Relacionamentos")
+}
+
+Container_Ext(database, "PostgreSQL Database", "Banco de dados relacional")
+System_Ext(emailService, "Email Service", "SendGrid/AWS SES")
+
+' ============================================================================
+' RELACIONAMENTOS EXTERNOS
+' ============================================================================
+
+Rel(userPerson, webApp, "Usa")
+Rel(userPerson, mobileApp, "Usa")
+Rel(webApp, userController, "Faz requisições HTTP", "HTTPS/REST")
+Rel(webApp, noteController, "Faz requisições HTTP", "HTTPS/REST")
+Rel(mobileApp, userController, "Faz requisições HTTP", "HTTPS/REST")
+Rel(mobileApp, noteController, "Faz requisições HTTP", "HTTPS/REST")
+
+' ============================================================================
+' RELACIONAMENTOS INTERNOS - CONTROLLERS → USE CASES
+' ============================================================================
+
+Rel(userController, createUser, "Chama", "Dependency Injection")
+Rel(userController, authenticateUser, "Chama", "Dependency Injection")
+Rel(noteController, createNote, "Chama", "Dependency Injection")
+Rel(noteController, listNotes, "Chama", "Dependency Injection")
+Rel(noteController, updateNote, "Chama", "Dependency Injection")
+
+' ============================================================================
+' RELACIONAMENTOS INTERNOS - USE CASES → ENTITIES & REPOSITORIES
+' ============================================================================
+
+Rel(createUser, userEntity, "Instancia e valida", "Domain Logic")
+Rel(createUser, userRepo, "Persiste dados", "Repository Pattern")
+Rel(authenticateUser, userEntity, "Valida credenciais", "Domain Logic")
+Rel(authenticateUser, userRepo, "Busca usuário", "Repository Pattern")
+
+Rel(createNote, noteEntity, "Instancia e valida", "Domain Logic")
+Rel(createNote, noteRepo, "Persiste dados", "Repository Pattern")
+Rel(listNotes, noteRepo, "Busca com filtros", "Repository Pattern")
+Rel(updateNote, noteEntity, "Aplica regras", "Domain Logic")
+Rel(updateNote, noteRepo, "Atualiza dados", "Repository Pattern")
+
+' ============================================================================
+' RELACIONAMENTOS INTERNOS - REPOSITORIES → DATABASE
+' ============================================================================
+
+Rel(userRepo, database, "Executa queries", "Prisma ORM / SQL")
+Rel(noteRepo, database, "Executa queries", "Prisma ORM / SQL")
+Rel(teamRepo, database, "Executa queries", "Prisma ORM / SQL")
+
+' ============================================================================
+' RELACIONAMENTOS - AUTH GUARD
+' ============================================================================
+
+Rel(authGuard, userController, "Protege rotas", "Interceptor")
+Rel(authGuard, noteController, "Protege rotas", "Interceptor")
+
+' ============================================================================
+' RELACIONAMENTOS EXTERNOS - EMAIL
+' ============================================================================
+
+Rel(authenticateUser, emailService, "Envia notificação", "HTTP API")
+Rel(createNote, emailService, "Envia notificação", "HTTP API")
+
+@enduml

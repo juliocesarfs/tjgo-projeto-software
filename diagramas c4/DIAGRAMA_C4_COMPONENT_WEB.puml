@@ -1,0 +1,129 @@
+@startuml C4_Component_ControlTasks_WebApp
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' ============================================================================
+' COMPONENT DIAGRAM - Level 3
+' Control Tasks Web Application - Componentes React/TypeScript
+' ============================================================================
+
+LAYOUT_WITH_LEGEND()
+
+Person(userPerson, "User", "Usuário do sistema")
+System_Ext(apiRest, "API REST", "Backend NestJS/TypeScript")
+
+Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
+    
+    ' ============================================================================
+    ' LAYER: PAGES/ROUTES
+    ' ============================================================================
+    Component(loginPage, "Login Page", "React Page", "Página de autenticação:\n- Formulário de login\n- Validação de campos\n- Redirecionamento")
+    
+    Component(dashboardPage, "Dashboard Page", "React Page", "Página principal:\n- Visão geral de tarefas\n- Cards de estatísticas\n- Navegação rápida")
+    
+    Component(notesPage, "Notes Page", "React Page", "Página de notas/tarefas:\n- Lista de notas\n- Filtros e busca\n- Paginação")
+    
+    Component(noteFormPage, "Note Form Page", "React Page", "Formulário de nota:\n- Criar/editar nota\n- Validação de campos\n- Upload de anexos")
+    
+    Component(profilePage, "Profile Page", "React Page", "Página de perfil:\n- Dados do usuário\n- Configurações\n- Alteração de senha")
+
+    ' ============================================================================
+    ' LAYER: COMPONENTS (UI)
+    ' ============================================================================
+    Component(noteCard, "Note Card", "React Component", "Componente de nota:\n- Exibição de dados\n- Ações rápidas\n- Status visual")
+    
+    Component(sidebar, "Sidebar", "React Component", "Menu lateral:\n- Navegação principal\n- Filtros rápidos\n- User info")
+    
+    Component(header, "Header", "React Component", "Cabeçalho:\n- Logo/título\n- Notificações\n- Menu do usuário")
+    
+    Component(loadingSpinner, "Loading Spinner", "React Component", "Indicador de carregamento:\n- Estados de loading\n- Feedback visual")
+
+    ' ============================================================================
+    ' LAYER: SERVICES
+    ' ============================================================================
+    Component(authService, "Auth Service", "TypeScript Service", "Serviço de autenticação:\n- Login/logout\n- Gerenciar tokens\n- Refresh tokens")
+    
+    Component(apiService, "API Service", "TypeScript Service", "Cliente da API:\n- HTTP requests\n- Interceptors\n- Error handling")
+    
+    Component(notificationService, "Notification Service", "TypeScript Service", "Serviço de notificações:\n- Toast messages\n- Push notifications\n- WebSocket connection")
+
+    ' ============================================================================
+    ' LAYER: STATE MANAGEMENT
+    ' ============================================================================
+    Component(authStore, "Auth Store", "Zustand/Context", "Estado de autenticação:\n- Dados do usuário\n- Status de login\n- Permissions")
+    
+    Component(notesStore, "Notes Store", "Zustand/Context", "Estado das notas:\n- Lista de notas\n- Filtros ativos\n- Cache local")
+    
+    Component(uiStore, "UI Store", "Zustand/Context", "Estado da interface:\n- Loading states\n- Modal states\n- Theme settings")
+
+    ' ============================================================================
+    ' LAYER: HOOKS
+    ' ============================================================================
+    Component(useAuth, "useAuth Hook", "Custom React Hook", "Hook de autenticação:\n- Login/logout logic\n- Token management\n- User data")
+    
+    Component(useNotes, "useNotes Hook", "Custom React Hook", "Hook de notas:\n- CRUD operations\n- Filtering logic\n- Local cache")
+    
+    Component(useNotifications, "useNotifications Hook", "Custom React Hook", "Hook de notificações:\n- Real-time updates\n- Push notifications\n- Toast management")
+}
+
+' ============================================================================
+' RELACIONAMENTOS EXTERNOS
+' ============================================================================
+
+Rel(userPerson, loginPage, "Acessa", "HTTPS")
+Rel(userPerson, dashboardPage, "Navega", "SPA Navigation")
+Rel(userPerson, notesPage, "Gerencia tarefas", "User Interaction")
+
+' ============================================================================
+' RELACIONAMENTOS - PAGES → COMPONENTS
+' ============================================================================
+
+Rel(dashboardPage, header, "Usa", "React Props")
+Rel(dashboardPage, sidebar, "Usa", "React Props")
+Rel(dashboardPage, noteCard, "Renderiza", "React Props")
+
+Rel(notesPage, header, "Usa", "React Props")
+Rel(notesPage, sidebar, "Usa", "React Props")
+Rel(notesPage, noteCard, "Renderiza lista", "React Props")
+Rel(notesPage, loadingSpinner, "Mostra loading", "Conditional Render")
+
+Rel(noteFormPage, header, "Usa", "React Props")
+Rel(noteFormPage, loadingSpinner, "Mostra loading", "Conditional Render")
+
+' ============================================================================
+' RELACIONAMENTOS - PAGES → HOOKS
+' ============================================================================
+
+Rel(loginPage, useAuth, "Usa", "React Hook")
+Rel(dashboardPage, useAuth, "Usa", "React Hook")
+Rel(dashboardPage, useNotes, "Usa", "React Hook")
+Rel(notesPage, useNotes, "Usa", "React Hook")
+Rel(noteFormPage, useNotes, "Usa", "React Hook")
+Rel(profilePage, useAuth, "Usa", "React Hook")
+
+' ============================================================================
+' RELACIONAMENTOS - HOOKS → SERVICES & STORES
+' ============================================================================
+
+Rel(useAuth, authService, "Chama", "Function Call")
+Rel(useAuth, authStore, "Atualiza", "State Update")
+Rel(useNotes, apiService, "Chama", "Function Call")
+Rel(useNotes, notesStore, "Atualiza", "State Update")
+Rel(useNotifications, notificationService, "Chama", "Function Call")
+
+' ============================================================================
+' RELACIONAMENTOS - SERVICES → STORES
+' ============================================================================
+
+Rel(authService, authStore, "Atualiza estado", "State Management")
+Rel(notificationService, uiStore, "Atualiza UI", "State Management")
+
+' ============================================================================
+' RELACIONAMENTOS - SERVICES → API EXTERNA
+' ============================================================================
+
+Rel(authService, apiRest, "Faz autenticação", "HTTP/REST")
+Rel(apiService, apiRest, "Requisições CRUD", "HTTP/REST")
+Rel(notificationService, apiRest, "WebSocket/SSE", "Real-time")
+
+@enduml
