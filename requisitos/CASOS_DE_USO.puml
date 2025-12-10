@@ -95,6 +95,10 @@ package "Notificações" #F0E0F2 {
   usecase "Criar Notificações\n(Automático)" as UC_CREATE_NOTIFICATION
   usecase "Listar Notificações" as UC_VIEW_NOTIFICATIONS
   usecase "Marcar como Lida" as UC_MARK_READ
+  usecase "Visualizar Histórico de\nNotificações de Email" as UC_VIEW_EMAIL_HISTORY
+  usecase "Filtrar Notificações\npor Tipo/Status" as UC_FILTER_NOTIFICATIONS
+}
+
 ' ============================================================================
 ' EXPORTAÇÃO, PERSONALIZAÇÃO E TUTORIAL
 ' ============================================================================
@@ -202,6 +206,8 @@ USER --> UC_VIEW_COMMENTS : lê comentários
 SYSTEM --> UC_CREATE_NOTIFICATION : cria automaticamente
 USER --> UC_VIEW_NOTIFICATIONS : consulta
 USER --> UC_MARK_READ : marca lidas
+USER --> UC_VIEW_EMAIL_HISTORY : visualiza histórico de emails
+USER --> UC_FILTER_NOTIFICATIONS : filtra por tipo/status
 
 ' ============================================================================
 ' RELACIONAMENTOS - LÓGICA DE DOMÍNIO (SISTEMA)
@@ -250,6 +256,18 @@ note right of UC_CREATE_NOTIFICATION
   - Tarefas compartilhadas
   - Convites de equipe
   - Tarefas vencidas
+  
+  Registradas no sistema para
+  visualização posterior pelo usuário
+end note
+
+note right of UC_VIEW_EMAIL_HISTORY
+  Lista todas as notificações
+  de email enviadas, com:
+  - Tipo de notificação
+  - Mensagem
+  - Data de envio
+  - Status (lida/não lida)
 end note
 
 note bottom of SYSTEM
