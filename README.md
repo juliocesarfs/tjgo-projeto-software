@@ -9,6 +9,7 @@ O **Control Tasks** é um sistema abrangente para gerenciamento de tarefas, nota
 - **Gerenciamento de Tarefas/Notas**: Criação, edição, atribuição, prazos e transições de estado.
 - **Colaboração em Equipe**: Times com administradores, compartilhamento de tarefas e comentários.
 - **Notificações**: Em tempo real via web/mobile e email para eventos importantes.
+- **Histórico de Notificações de Email**: Visualização e gerenciamento de todas as notificações enviadas por email.
 - **Histórico e Estatísticas**: Registro de atividades e métricas de produtividade.
 - **Acesso Multiplataforma**: Interfaces web e mobile com sincronização.
 - **Personalização e Exportação**: Interface customizável e exportação de dados.
@@ -83,6 +84,13 @@ Principais requisitos funcionais do sistema:
 ### 1.5 Autenticação e Tokens
 - RF-20: Geração de API Tokens (JWT).
 - RF-21: Revogação automática de token anterior.
+
+### 1.6 Notificações de Email
+- RF-22: Criar registro de notificação de email (tipo, mensagem, destinatário).
+- RF-23: Listar notificações de email do usuário.
+- RF-24: Marcar notificação como lida.
+- RF-25: Filtrar notificações por tipo ou status (lida/não lida).
+- RF-26: Enviar email para o usuário (mantém funcionalidade existente).
 
 ## Requisitos Não Funcionais
 
@@ -172,6 +180,8 @@ Principais casos de uso do sistema, organizados por pacotes:
 - Criar Notificações (Automático)
 - Listar Notificações
 - Marcar como Lida
+- Visualizar Histórico de Notificações de Email
+- Filtrar Notificações por Tipo/Status
 
 ### Funcionalidades Gerais
 - Exportar Dados
