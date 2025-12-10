@@ -227,3 +227,75 @@
 - **Exceção**: Tokens sem expiração podem ser reutilizados
 
 ---
+
+### 1.6 Notificações de Email
+
+#### RF-22: Criar registro de notificação de email
+- **Descrição**: Registrar notificações de email enviadas aos usuários
+- **Dados da notificação**:
+  - ID da notificação
+  - ID do usuário destinatário
+  - ID da nota relacionada (opcional)
+  - Tipo de notificação (task_assigned, task_due, comment_added, team_invite, etc.)
+  - Mensagem da notificação
+  - Data de envio
+  - Data de leitura (null se não lida)
+- **Validações**:
+  - Usuário destinatário deve existir
+  - Tipo de notificação deve ser válido
+- **Saída**: Notificação criada
+- **Processo**: Automático quando emails são enviados
+
+#### RF-23: Listar notificações de email do usuário
+- **Descrição**: Recuperar todas as notificações de email de um usuário
+- **Entrada**: ID do usuário
+- **Parâmetros opcionais**:
+  - `type`: filtrar por tipo de notificação
+  - `read`: filtrar por lidas (true) ou não lidas (false)
+  - `startDate`: data inicial
+  - `endDate`: data final
+- **Saída**: Array de notificações com todos os dados
+- **Endpoint**: `GET /notifications/user/:userId`
+- **Autenticação**: Requerida
+
+#### RF-24: Marcar notificação como lida
+- **Descrição**: Registrar que usuário visualizou a notificação
+- **Entrada**: ID da notificação
+- **Processo**: Atualizar campo `readAt` com timestamp atual
+- **Validações**:
+  - Notificação deve existir
+  - Usuário deve ser o destinatário
+- **Saída**: Notificação atualizada
+- **Endpoint**: `PUT /notifications/:id/read`
+- **Autenticação**: Requerida
+
+#### RF-25: Filtrar notificações por tipo ou status
+- **Descrição**: Permitir filtragem específica de notificações
+- **Tipos de notificação**:
+  - `task_assigned`: Tarefa atribuída
+  - `task_due`: Tarefa com prazo próximo/vencida
+  - `comment_added`: Comentário adicionado
+  - `team_invite`: Convite para time
+  - `task_shared`: Tarefa compartilhada
+- **Status**:
+  - `unread`: não lidas (readAt = null)
+  - `read`: lidas (readAt ≠ null)
+- **Endpoint**: Via query parameters em `GET /notifications/user/:userId`
+- **Autenticação**: Requerida
+
+#### RF-26: Enviar email para o usuário
+- **Descrição**: Manter funcionalidade existente de envio de emails
+- **Processo**:
+  1. Criar registro da notificação (RF-22)
+  2. Enviar email via serviço externo (SendGrid/AWS SES)
+  3. Usuário pode visualizar histórico posteriormente (RF-23)
+- **Eventos que disparam emails**:
+  - Atribuição de tarefa
+  - Tarefa vencida
+  - Comentário adicionado
+  - Convite para time
+  - Tarefa compartilhada
+- **Autenticação**: Sistema interno
+
+---
+
