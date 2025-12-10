@@ -1,5 +1,22 @@
 # Control Tasks - Sistema de Gerenciamento de Tarefas e Equipes
 
+## 📑 Sumário
+
+1. [Integrantes](#integrantes-do-projeto)
+2. [Descrição do Sistema](#descrição-do-projeto)
+3. [Funcionalidades](#funcionalidades-principais)
+4. [Histórias de Usuário](#histórias-de-usuário)
+5. [Documentação Completa](#documentação-completa)
+6. [Requisitos Funcionais](#requisitos-funcionais)
+7.  [Requisitos Não Funcionais](#requisitos-não-funcionais)
+8.  [Casos de Uso](#casos-de-uso)
+9.  [Diagramas de Arquitetura](#diagramas)
+
+## Integrantes do Projeto
+
+- **Alex Moreira de Andrade** - 2025200172
+- **Julio Cesar Afonso** - 2025200239
+
 ## Descrição do Projeto
 
 O **Control Tasks** é um sistema abrangente para gerenciamento de tarefas, notas, equipes, comentários, atividades e notificações. Desenvolvido para suportar usuários em diferentes papéis (Gerente de Equipe, Membro da Equipe, Pessoa Autônoma e Administrador), o sistema oferece acesso multiplataforma via web e mobile, com integrações para notificações por email em tempo real.
@@ -49,6 +66,15 @@ O **Control Tasks** é um sistema abrangente para gerenciamento de tarefas, nota
 - Como usuário, quero personalizar a interface para melhor usabilidade.
 - Como usuário, quero acessar a versão móvel para utilizar o sistema em diferentes dispositivos.
 - Como usuário, quero acessar um tutorial para aprender a usar o sistema.
+
+## Documentação Completa
+
+| Documento | Formato | Descrição |
+|-----------|---------|-----------|
+| [Histórias de Usuário](requisitos/HISTORIAS_DE_USUARIO.md) | Markdown | Necessidades e expectativas dos diferentes perfis de usuários |
+| [Requisitos Funcionais](requisitos/REQUISITOS.md) | Markdown | Especificação detalhada dos requisitos do sistema |
+| [Requisitos Não Funcionais](requisitos/REQUISITOS_NAO_FUNCIONAIS.md) | Markdown | Requisitos de qualidade|
+| [Casos de Uso](requisitos/CASOS_DE_USO.puml) | PlantUML | Diagrama UML com interações entre atores e funcionalidades |
 
 ## Requisitos Funcionais
 
@@ -195,6 +221,15 @@ Principais casos de uso do sistema, organizados por pacotes:
 - Validar Permissões
 
 ## Diagramas
+
+| Diagrama | Nível C4 | Descrição |
+|----------|----------|-----------|
+| Casos de Uso | - | Funcionalidades e interações entre atores e sistema |
+| C4 - Contexto | 1 | Visão geral do sistema e dependências externas |
+| C4 - Container | 2 | Aplicações principais e tecnologias utilizadas |
+| C4 - API | 3 | Componentes internos da API com Clean Architecture |
+| C4 - Web | 3 | Estrutura da aplicação React (Pages, Components, Hooks) |
+| C4 - Mobile | 3 | Aplicativo React Native com funcionalidades mobile |
 
 ### Diagrama de Casos de Uso
 ![Diagrama de Casos de Uso UML](imagens/Casos-de-uso.png)
