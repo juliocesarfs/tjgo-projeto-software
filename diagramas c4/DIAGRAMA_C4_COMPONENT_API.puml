@@ -25,6 +25,8 @@ Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
     Component(noteController, "Note Controller", "NestJS Controller", "Controlador HTTP:\n- Recebe requisições\n- Valida DTOs\n- Delega para Services")
     
     Component(teamController, "Team Controller", "NestJS Controller", "Controlador HTTP:\n- Recebe requisições\n- Valida DTOs\n- Delega para Services")
+    
+    Component(notificationController, "Notification Controller", "NestJS Controller", "Controlador HTTP:\n- Listar notificações do usuário\n- Marcar como lida\n- Filtros de notificações")
 
     ' ============================================================================
     ' APPLICATION LAYER - Services (Orquestração)
@@ -36,6 +38,8 @@ Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
     Component(teamService, "Team Service", "NestJS Service", "Serviço de times:\n- Orquestra casos de uso\n- Gerencia membros\n- Coordena repositórios")
     
     Component(authService, "Auth Service", "NestJS Service", "Serviço de autenticação:\n- Valida credenciais\n- Gera JWT tokens\n- Gerencia sessões")
+    
+    Component(notificationService, "Notification Service", "NestJS Service", "Serviço de notificações:\n- Criar notificações de email\n- Listar notificações\n- Marcar como lida\n- Envia emails")
 
     ' ============================================================================
     ' DOMAIN LAYER - Entidades e Contratos (Regras de Negócio)
@@ -47,11 +51,15 @@ Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
         
         Component(teamEntity, "Team", "Domain Entity", "Entidade de domínio puro:\n- id, name, code, adminId\n- Regras de time\n- Validações de membros")
         
+        Component(emailNotificationEntity, "EmailNotification", "Domain Entity", "Entidade de domínio puro:\n- id, userId, noteId, type, message\n- sentAt, readAt\n- Validações")
+        
         Component(userRepoInterface, "IUserRepository", "Domain Interface", "Contrato de repositório:\n- create(user)\n- findById(id)\n- findByEmail(email)\n- update(id, data)")
         
         Component(noteRepoInterface, "INoteRepository", "Domain Interface", "Contrato de repositório:\n- create(note)\n- findAll(filters)\n- findById(id)\n- update(id, data)\n- delete(id)")
         
         Component(teamRepoInterface, "ITeamRepository", "Domain Interface", "Contrato de repositório:\n- create(team)\n- findById(id)\n- addMember(teamId, userId)\n- removeMember(teamId, userId)")
+        
+        Component(notificationRepoInterface, "INotificationRepository", "Domain Interface", "Contrato de repositório:\n- create(notification)\n- findByUserId(userId)\n- markAsRead(id)\n- findUnread(userId)")
         
         ' ============================================================================
         ' INFRASTRUCTURE - Implementações dos Repositórios
@@ -61,6 +69,8 @@ Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
         Component(noteRepo, "NoteRepository", "Prisma Implementation", "Implementação com Prisma:\n- Implementa INoteRepository\n- Mapeia entidades para DB\n- Queries SQL via Prisma")
         
         Component(teamRepo, "TeamRepository", "Prisma Implementation", "Implementação com Prisma:\n- Implementa ITeamRepository\n- Mapeia entidades para DB\n- Queries SQL via Prisma")
+        
+        Component(notificationRepo, "NotificationRepository", "Prisma Implementation", "Implementação com Prisma:\n- Implementa INotificationRepository\n- Mapeia entidades para DB\n- Queries SQL via Prisma")
     }
 }
 
@@ -85,42 +95,50 @@ Rel(authGuard, authService, "1. Valida token JWT", "JWT Validation")
 Rel(authGuard, userController, "2. Encaminha se autorizado", "HTTP Forward")
 Rel(authGuard, noteController, "2. Encaminha se autorizado", "HTTP Forward")
 Rel(authGuard, teamController, "2. Encaminha se autorizado", "HTTP Forward")
+Rel(authGuard, notificationController, "2. Encaminha se autorizado", "HTTP Forward")
 
 ' Controllers delegam para Services
 Rel(userController, userService, "Delega operações", "Dependency Injection")
 Rel(userController, authService, "Autentica", "Dependency Injection")
 Rel(noteController, noteService, "Delega operações", "Dependency Injection")
 Rel(teamController, teamService, "Delega operações", "Dependency Injection")
+Rel(notificationController, notificationService, "Delega operações", "Dependency Injection")
 
 ' Services dependem das Interfaces de Repositório (Dependency Inversion)
 Rel(userService, userRepoInterface, "Usa contrato", "DIP")
 Rel(noteService, noteRepoInterface, "Usa contrato", "DIP")
 Rel(teamService, teamRepoInterface, "Usa contrato", "DIP")
 Rel(authService, userRepoInterface, "Usa contrato", "DIP")
+Rel(notificationService, notificationRepoInterface, "Usa contrato", "DIP")
 
 ' Services trabalham com Entidades de Domínio
 Rel(userService, userEntity, "Cria e manipula", "Domain Logic")
 Rel(noteService, noteEntity, "Cria e manipula", "Domain Logic")
 Rel(teamService, teamEntity, "Cria e manipula", "Domain Logic")
 Rel(authService, userEntity, "Valida", "Domain Logic")
+Rel(notificationService, emailNotificationEntity, "Cria e manipula", "Domain Logic")
+Rel(noteService, notificationService, "Cria notificações", "Service Call")
+Rel(authService, notificationService, "Cria notificações", "Service Call")
 
 ' Repositories implementam as Interfaces
 Rel(userRepo, userRepoInterface, "Implementa", "Interface Implementation")
 Rel(noteRepo, noteRepoInterface, "Implementa", "Interface Implementation")
 Rel(teamRepo, teamRepoInterface, "Implementa", "Interface Implementation")
+Rel(notificationRepo, notificationRepoInterface, "Implementa", "Interface Implementation")
 
 ' Repositories mapeiam Entidades
 Rel(userRepo, userEntity, "Mapeia para DB", "ORM Mapping")
 Rel(noteRepo, noteEntity, "Mapeia para DB", "ORM Mapping")
 Rel(teamRepo, teamEntity, "Mapeia para DB", "ORM Mapping")
+Rel(notificationRepo, emailNotificationEntity, "Mapeia para DB", "ORM Mapping")
 
 ' Repositories acessam Database
 Rel(userRepo, database, "Executa queries", "Prisma ORM")
 Rel(noteRepo, database, "Executa queries", "Prisma ORM")
 Rel(teamRepo, database, "Executa queries", "Prisma ORM")
+Rel(notificationRepo, database, "Executa queries", "Prisma ORM")
 
 ' Services externos
-Rel(authService, emailService, "Envia notificações", "SMTP/HTTP API")
-Rel(noteService, emailService, "Envia notificações", "SMTP/HTTP API")
+Rel(notificationService, emailService, "Envia emails", "SMTP/HTTP API")
 
 @enduml

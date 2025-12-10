@@ -28,6 +28,8 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
     Component(profilePage, "Profile Page", "React Page", "Página de perfil:\n- Dados do usuário\n- Configurações\n- Alteração de senha")
     
     Component(teamsPage, "Teams Page", "React Page", "Página de times:\n- Lista de times\n- Criar/editar time\n- Gerenciar membros")
+    
+    Component(notificationsPage, "Notifications Page", "React Page", "Página de notificações:\n- Lista de notificações de email\n- Marcar como lida\n- Filtrar por tipo")
 
     ' ============================================================================
     ' LAYER: COMPONENTS (UI)
@@ -35,6 +37,8 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
     Component(noteCard, "Note Card", "React Component", "Componente de nota:\n- Exibição de dados\n- Ações rápidas\n- Status visual")
     
     Component(teamCard, "Team Card", "React Component", "Componente de time:\n- Dados do time\n- Lista de membros\n- Ações de admin")
+    
+    Component(notificationCard, "Notification Card", "React Component", "Componente de notificação:\n- Dados da notificação\n- Status (lida/não lida)\n- Ação de marcar como lida")
     
     Component(sidebar, "Sidebar", "React Component", "Menu lateral:\n- Navegação principal\n- Filtros rápidos\n- User info")
     
@@ -56,6 +60,8 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
     
     Component(teamsStore, "Teams Store", "Zustand/Context", "Estado dos times:\n- Lista de times\n- Membros\n- Permissões")
     
+    Component(notificationsStore, "Notifications Store", "Zustand/Context", "Estado das notificações:\n- Lista de notificações\n- Contador de não lidas\n- Cache local")
+    
     ' ============================================================================
     ' LAYER: HOOKS
     ' ============================================================================
@@ -66,6 +72,8 @@ Container_Boundary(webAppContainer, "Web Application - React/TypeScript") {
     Component(useNotifications, "useNotifications Hook", "Custom React Hook", "Hook de notificações:\n- Real-time updates\n- Push notifications\n- Toast management")
     
     Component(useTeams, "useTeams Hook", "Custom React Hook", "Hook de times:\n- CRUD operations\n- Gerenciar membros\n- Permissões de admin")
+    
+    Component(useEmailNotifications, "useEmailNotifications Hook", "Custom React Hook", "Hook de notificações de email:\n- Listar notificações\n- Marcar como lida\n- Filtros")
 }
 
 ' ============================================================================
@@ -78,6 +86,7 @@ Rel(userPerson, notesPage, "Gerencia tarefas", "User Interaction")
 Rel(userPerson, noteFormPage, "Cria/edita notas", "User Interaction")
 Rel(userPerson, profilePage, "Gerencia perfil", "User Interaction")
 Rel(userPerson, teamsPage, "Gerencia times", "User Interaction")
+Rel(userPerson, notificationsPage, "Visualiza notificações", "User Interaction")
 
 ' ============================================================================
 ' RELACIONAMENTOS - PAGES → COMPONENTS
@@ -97,6 +106,9 @@ Rel(profilePage, sidebar, "Usa", "React Props")
 Rel(teamsPage, sidebar, "Usa", "React Props")
 Rel(teamsPage, teamCard, "Renderiza lista", "React Props")
 
+Rel(notificationsPage, sidebar, "Usa", "React Props")
+Rel(notificationsPage, notificationCard, "Renderiza lista", "React Props")
+
 ' ============================================================================
 ' RELACIONAMENTOS - PAGES → HOOKS
 ' ============================================================================
@@ -111,6 +123,8 @@ Rel(dashboardPage, useNotifications, "Usa", "React Hook")
 Rel(notesPage, useNotifications, "Usa", "React Hook")
 Rel(teamsPage, useTeams, "Usa", "React Hook")
 Rel(teamsPage, useAuth, "Usa", "React Hook")
+Rel(notificationsPage, useEmailNotifications, "Usa", "React Hook")
+Rel(notificationsPage, useAuth, "Usa", "React Hook")
 
 ' ============================================================================
 ' RELACIONAMENTOS - HOOKS → SERVICES & STORES
@@ -123,6 +137,8 @@ Rel(useNotes, notesStore, "Atualiza", "State Update")
 Rel(useNotifications, notificationService, "Chama", "Function Call")
 Rel(useTeams, apiService, "Chama", "Function Call")
 Rel(useTeams, teamsStore, "Atualiza", "State Update")
+Rel(useEmailNotifications, apiService, "Chama", "Function Call")
+Rel(useEmailNotifications, notificationsStore, "Atualiza", "State Update")
 
 ' ============================================================================
 ' RELACIONAMENTOS - SERVICES → STORES

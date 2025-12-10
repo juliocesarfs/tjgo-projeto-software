@@ -26,6 +26,8 @@ Container_Boundary(mobileAppContainer, "Mobile Application - React Native") {
     Component(noteDetailScreen, "Note Detail Screen", "React Native Screen", "Detalhes da nota:\n- Visualização completa\n- Edição inline\n- Ações contextuais")
     
     Component(profileScreen, "Profile Screen", "React Native Screen", "Perfil do usuário:\n- Dados pessoais\n- Configurações do app\n- Sincronização")
+    
+    Component(notificationsScreen, "Notifications Screen", "React Native Screen", "Tela de notificações:\n- Lista de notificações de email\n- Marcar como lida\n- Filtros e busca")
 
     ' ============================================================================
     ' LAYER: NAVIGATION
@@ -38,6 +40,8 @@ Container_Boundary(mobileAppContainer, "Mobile Application - React Native") {
     ' LAYER: COMPONENTS (UI)
     ' ============================================================================
     Component(noteItem, "Note Item", "React Native Component", "Item de nota:\n- Layout responsivo\n- Swipe actions\n- Status visual")
+    
+    Component(notificationItem, "Notification Item", "React Native Component", "Item de notificação:\n- Dados da notificação\n- Badge de não lida\n- Swipe para marcar como lida")
     
     ' ============================================================================
     ' LAYER: SERVICES
@@ -58,6 +62,8 @@ Container_Boundary(mobileAppContainer, "Mobile Application - React Native") {
     Component(notesContext, "Notes Context", "React Context", "Contexto de notas:\n- Cache local\n- Sincronização\n- Estado offline")
     
     Component(appContext, "App Context", "React Context", "Contexto do app:\n- Configurações globais\n- Theme management\n- Network status")
+    
+    Component(notificationsContext, "Notifications Context", "React Context", "Contexto de notificações:\n- Lista de notificações\n- Contador de não lidas\n- Cache local")
 
     ' ============================================================================
     ' LAYER: HOOKS
@@ -66,7 +72,7 @@ Container_Boundary(mobileAppContainer, "Mobile Application - React Native") {
     
     Component(useOfflineSync, "useOfflineSync Hook", "Custom Hook", "Hook de sincronização:\n- Detecção de rede\n- Queue de requests\n- Sync automático")
     
-    Component(usePushNotifications, "usePushNotifications Hook", "Custom Hook", "Hook de notificações:\n- Permission handling\n- Token registration\n- Message processing")
+    Component(usePushNotifications, "usePushNotifications Hook", "Custom Hook", "Hook de notificações:\n- Permission handling\n- Token registration\n- Message processing\n- Listar notificações recebidas")
 }
 
 System_Ext(biometricAuth, "Biometric Auth", "iOS FaceID/TouchID, Android Fingerprint")
@@ -78,6 +84,7 @@ System_Ext(pushService, "Push Service", "Firebase Cloud Messaging / APNs")
 
 Rel(userPerson, loginScreen, "Acessa app", "Touch/Gestures")
 Rel(userPerson, dashboardScreen, "Navega", "Touch Navigation")
+Rel(userPerson, notificationsScreen, "Visualiza notificações", "Touch Navigation")
 
 ' ============================================================================
 ' RELACIONAMENTOS - NAVIGATION
@@ -90,12 +97,14 @@ Rel(stackNavigator, noteDetailScreen, "Navega para", "Screen Transition")
 Rel(tabNavigator, dashboardScreen, "Tab navigation", "Bottom Tab")
 Rel(tabNavigator, notesListScreen, "Tab navigation", "Bottom Tab")
 Rel(tabNavigator, profileScreen, "Tab navigation", "Bottom Tab")
+Rel(tabNavigator, notificationsScreen, "Tab navigation", "Bottom Tab")
 
 ' ============================================================================
 ' RELACIONAMENTOS - SCREENS → COMPONENTS
 ' ============================================================================
 
 Rel(notesListScreen, noteItem, "Renderiza lista", "FlatList")
+Rel(notificationsScreen, notificationItem, "Renderiza lista", "FlatList")
 
 ' ============================================================================
 ' RELACIONAMENTOS - SCREENS → HOOKS
@@ -106,6 +115,7 @@ Rel(dashboardScreen, useAuthMobile, "Usa", "React Hook")
 Rel(dashboardScreen, useOfflineSync, "Usa", "React Hook")
 Rel(notesListScreen, useOfflineSync, "Usa", "React Hook")
 Rel(profileScreen, usePushNotifications, "Usa", "React Hook")
+Rel(notificationsScreen, usePushNotifications, "Usa", "React Hook")
 
 ' ============================================================================
 ' RELACIONAMENTOS - HOOKS → SERVICES & CONTEXT
@@ -116,7 +126,9 @@ Rel(useAuthMobile, authContext, "Atualiza", "Context Update")
 Rel(useOfflineSync, apiServiceMobile, "Chama", "Function Call")
 Rel(useOfflineSync, storageService, "Usa cache", "Local Storage")
 Rel(useOfflineSync, notesContext, "Atualiza", "Context Update")
-Rel(usePushNotifications, pushNotificationService, "Usa", "Function Call")
+Rel(usePushNotifications, pushNotificationService, "Gerencia push", "Function Call")
+Rel(usePushNotifications, notificationsContext, "Atualiza estado", "Context Update")
+Rel(usePushNotifications, storageService, "Cache local", "AsyncStorage")
 
 ' ============================================================================
 ' RELACIONAMENTOS - SERVICES → EXTERNAL
