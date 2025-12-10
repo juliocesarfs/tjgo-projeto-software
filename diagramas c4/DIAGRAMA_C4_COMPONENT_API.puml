@@ -77,6 +77,31 @@ Container_Boundary(apiContainer, "API REST - NestJS/TypeScript") {
 Container_Ext(database, "PostgreSQL Database", "Banco de dados relacional")
 System_Ext(emailService, "Email Service", "SendGrid/AWS SES")
 
+' Posicionar Domain Layer abaixo dos Services
+Lay_D(userService, domainLayer)
+Lay_D(noteService, domainLayer)
+
+' Organizar componentes dentro da Domain Layer horizontalmente
+Lay_R(userEntity, noteEntity)
+Lay_R(noteEntity, teamEntity)
+Lay_R(teamEntity, emailNotificationEntity)
+Lay_R(userRepoInterface, noteRepoInterface)
+Lay_R(noteRepoInterface, teamRepoInterface)
+Lay_R(teamRepoInterface, notificationRepoInterface)
+Lay_R(userRepo, noteRepo)
+Lay_R(noteRepo, teamRepo)
+Lay_R(teamRepo, notificationRepo)
+
+' Alinhar verticalmente: Entities -> Interfaces -> Repositories
+Lay_D(userEntity, userRepoInterface)
+Lay_D(noteEntity, noteRepoInterface)
+Lay_D(teamEntity, teamRepoInterface)
+Lay_D(emailNotificationEntity, notificationRepoInterface)
+Lay_D(userRepoInterface, userRepo)
+Lay_D(noteRepoInterface, noteRepo)
+Lay_D(teamRepoInterface, teamRepo)
+Lay_D(notificationRepoInterface, notificationRepo)
+
 ' ============================================================================
 ' RELACIONAMENTOS EXTERNOS
 ' ============================================================================
